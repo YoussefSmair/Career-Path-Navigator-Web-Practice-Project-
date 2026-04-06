@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- ═══════════════════════════════════════════════════════
+         إعدادات الـ META والصفحة
+         هنا بنعرّف الـ charset علشان المتصفح يفهم الحروف العربي بدون مشاكل،
+         والـ viewport علشان الـ responsive design يشتغل صح على الموبايل،
+         والـ description ده الوصف اللي بيظهر في نتايج البحث.
+    ═══════════════════════════════════════════════════════════ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Career Path Navigator – عن المشروع وفريق العمل">
+    <title>Career Path Navigator | عن المشروع</title>
+    <!-- بنستدعي ملف الـ style.css الأساسي اللي جواه الـ variables وتصميم الـ dark mode والـ layout الأساسي -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── إضافات صفحة الـ About ─────────────────────────── */
+
+        /* الـ KPI stats grid: دي الـ grid اللي بتعرض الأربع أرقام جنب بعض، 
+           واستخدمنا grid-template-columns علشان تبقى responsive وتنزل تحت بعض في الموبايل */
+        .about-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        /* الـ stat card: بنخلي الـ text-align: center علشان الرقم والـ label يبقوا في النص */
+        .about-stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .about-stat-card .stat-big {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            display: block;
+        }
+
+        .about-stat-card .stat-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* الـ Category badges: دي الـ styles بتاعة الزراير البيضاوية (pills) للمجالات */
+        .category-badges-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin: 1.5rem 0;
+            justify-content: center;
+        }
+
+        .cat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1.5px solid;
+        }
+
+        /* ── كروت فريق العمل (TEAM CARDS) ─────────────────────────────────── */
+        /* الـ Grid هنا بيعمل 3 عوامل (columns) في شاشات الكمبيوتر، وبينزلوا عمود واحد في الموبايل */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+        }
+
+        /* ستايل كل كارت لعضو الفريق */
+        .team-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 2.2rem 1.75rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        /* تأثير الـ Hover: بـ lift الكارت لفوق شوية وبيعمل shadow أكبر */
+        .team-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ── مكان صور التيم اللي عملوا الموقع (PHOTO PLACEHOLDER) ─────────────────────────────
+           المربع المُنقط ده بيظهر كـ placeholder لما ميكونش فيه صورة حقيقية.
+           لما بتعمل hover بلونه بيتغير.
+           تحت في كود الـ HTML هتلاقي شرح إزاي تحط صور التيم الحقيقية مكان ده جوا الـ img tag.
+           *** ركز هنا: ده المكان اللي هتحط فيه صور التيم اللي عملوا الموقع!!! *** */
+        .team-photo-placeholder {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-md);
+            border: 2px dashed var(--border);
+            background: var(--surface-2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            gap: 0.3rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .team-photo-placeholder:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .team-photo-placeholder .photo-icon {
+            font-size: 2rem;
+        }
+
+        /* تنسيقات اسم العضو (team-name)، تخصصه، زرار الـ role، وتفاصيل الدور */
+        .team-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .team-field {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        .team-role {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: var(--radius-full);
+            padding: 0.2rem 0.8rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+        }
+
+        .team-detail {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── فواصل أفقية (Horizontal divider) بين الأقسام ─────────── */
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         الـ NAVBAR (شريط التنقل)
+         الـ Layout هنا متقسم: [زراير التحكم في الشمال] ── [اللوجو في النص] ── [لينكات الـ Nav في اليمين]
+         اللوجو متسنتر بالضبط في النص بفضل الـ position: absolute.
+         استخدمنا الـ class اللي اسمه active علشان نبرز اللينك بتاع الصفحة اللي إحنا واقفين عليها دلوقتي.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <nav class="navbar">
+        <!-- ── زراير التحكم في الـ Language والـ Theme (موجودين في الشمال) ── -->
+        <div class="nav-controls">
+            <!-- الزرار ده بيـ toggle بين اللغة العربية (AR) والإنجليزية (EN) -->
+            <button id="langToggle"  class="ctrl-btn">🌐 EN</button>
+            <!-- الزرار ده بيـ toggle بين الـ Light mode والـ Dark mode -->
+            <button id="themeToggle" class="ctrl-btn">🌙 Dark</button>
+        </div>
+
+        <!-- زرار الـ Hamburger – بيظهر بس في شاشات الموبايل علشان يفتح الـ menu -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- ══ اسم الموقع (متسنتر عن طريق الـ CSS باستخدام position: absolute) ══
+             الـ CSS بيتولى موضوع السنترة بالكامل. -->
+        <div class="logo"><img src="assets/images/new_image_3.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-inline-end: 8px;">Career Path <span>Navigator</span></div>
+
+        <!-- ══ لينكات الـ NAV (موجودين في يمين الـ navbar) ══
+             الترتيب: الرئيسية ← الاختبار ← عن المشروع
+             بنستخدم هنا الـ data-i18n علشان الـ JavaScript (ملف main.js) يترجمهم أوتوماتيك. -->
+        <ul class="nav-links">
+            <!-- لينك الذهاب للصفحة الرئيسية -->
+            <li><a href="home.html"       data-i18n="nav_home">الرئيسية</a></li>
+            <!-- لينك الذهاب لصفحة الاختبار -->
+            <li><a href="assessment.html" data-i18n="nav_assessment">الاختبار</a></li>
+            <!-- لينك صفحة عن المشروع (مع الـ class active لأننا فيها دلوقتي) -->
+            <li><a href="about.html" class="active" data-i18n="nav_about">عن المشروع</a></li>
+        </ul>
+    </nav>
+
+    <!-- ═══ ABOUT HERO ════════════════════════════════════════
+         بانر عنوان الصفحة اللي فوق خالص.
+         الـ data-i18n بيترجم العناوين دي عن طريق الـ main.js.
+    ════════════════════════════════════════════════════════════ -->
+    <div class="about-hero">
+        <h1 data-i18n="about_title">عن المشروع 🎓</h1>
+        <p data-i18n="about_sub">Career Path Navigator – مشروع تخرج تعليمي</p>
+    </div>
+
+    <div class="container" style="max-width: 80%;">
+
+        <!-- ═══ إحصائيات المشروع (KPI STATS) ═════════════════════════════════════
+             أربع أرقام مهمة عن المشروع.
+             الـ data-i18n-num بيحول الأرقام دي لأرقام عربية (زى ٨، ١٥) لو الموقع بالعربي.
+             الأرقام دي بتوضح حجم البيانات (زي عدد المجالات والكورسات).
+        ═════════════════════════════════════════════════════════ -->
+        <div class="about-stats-grid">
+            <div class="about-stat-card">
+                <span class="stat-big" data-i18n-num="8">8</span>
+                <div class="stat-desc" data-i18n="about_stat1_label">مجال مهني مدعوم</div>
+            </div>
+            <div class="about-stat-card">
+                <span class="stat-big" data-i18n-num="15">15</span>
+                <div class="stat-desc" data-i18n="about_stat2_label">سؤال تفاعلي</div>
+            </div>
+            <div class="about-stat-card">
+                <span class="stat-big" data-i18n-num="24">24</span>
+                <div class="stat-desc" data-i18n="about_stat3_label">كورس موصى به</div>
+            </div>
+            <div class="about-stat-card">
+                <span class="stat-big" data-i18n="about_stat4_num">٥ دقائق</span>
+                <div class="stat-desc" data-i18n="about_stat4_label">مدة الاختبار</div>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- ═══ مهمتنا (OUR MISSION) ██████████████████████████████████████████
+             إزاي الجزء ده بيشتغل:
+             ─────────────────────────────────────────────────────────
+             البراجراف بتاع الـ mission بيستخدم الـ data-i18n="mission_desc".
+             الكود ده موجود جوه ملف js/main.js جوه الـ translations object:
+             ولما اليوزر بيغير اللغة، الـ main.js بيغيّر النص ده للغة الصح بشكل أوتوماتيكي.
+             يعني مبتكتبش النص بايدك هنا أبداً، الكود نفسه بيجيبه من الجافا سكريبت!
+             ████████████████████████████████████████████████████████ -->
+        <div class="mission-card">
+            <!-- عنوان الـ Mission اللي بيترجم من الـ main.js -->
+            <h2 data-i18n="mission_title">🎯 مهمتنا</h2>
+
+            <!-- ▼▼▼ النص بتاع الـ MISSION ▼▼▼
+                 النص ده بيتعرض باللغة المظبوطة أوتوماتيك عن طريق دالة applyLanguage في الـ JS.
+                 علشان كده التاج هنا فاضي ومبنكتبش جواه حاجة. -->
+            <p data-i18n="mission_desc" style="margin-bottom:1rem; line-height:1.85;"></p>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- ═══ المجالات (FIELDS COVERED) ════════════════════════════════
+             دول 8 زراير (badges) وكل واحد بيمثل مجال مهني.
+        ════════════════════════════════════════════════════════ -->
+        <h2 class="section-title" style="margin-bottom:0.5rem;" data-i18n="about_fields_title">ما المجالات التي يغطيها الموقع؟</h2>
+        <p style="color:var(--text-muted); margin-bottom:1rem;" data-i18n="about_fields_sub">يشمل الاختبار 8 مسارات مهنية لجميع التوجهات:</p>
+
+        <div class="category-badges-grid">
+            <span class="cat-badge" data-i18n="field_programming" style="background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe;">💻 البرمجة</span>
+            <span class="cat-badge" data-i18n="field_design" style="background:#fce7f3;color:#be185d;border-color:#fbcfe8;">🎨 التصميم الجرافيكي</span>
+            <span class="cat-badge" data-i18n="field_uiux" style="background:#e0f2fe;color:#0369a1;border-color:#bae6fd;">📱 UI/UX Design</span>
+            <span class="cat-badge" data-i18n="field_finearts" style="background:#fef9c3;color:#854d0e;border-color:#fde68a;">🖌️ الفنون الجميلة</span>
+            <span class="cat-badge" data-i18n="field_medicine" style="background:#dcfce7;color:#166534;border-color:#bbf7d0;">🏥 الطب والعلوم الصحية</span>
+            <span class="cat-badge" data-i18n="field_engineering" style="background:#fff7ed;color:#c2410c;border-color:#fed7aa;">⚙️ الهندسة</span>
+            <span class="cat-badge" data-i18n="field_law" style="background:#f3f4f6;color:#374151;border-color:#d1d5db;">⚖️ الحقوق والقانون</span>
+            <span class="cat-badge" data-i18n="field_tourism" style="background:#ede9fe;color:#5b21b6;border-color:#ddd6fe;">✈️ السياحة والإرشاد</span>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- ═══ كيف تم بناء المشروع؟ (HOW IT WAS BUILT) ════════════════════════════════
+             هنا بنشرح باختصار التقنيات (technologies) اللي استخدمناها في المشروع.
+             النص بيترجم باستخدام الـ main.js.
+        ════════════════════════════════════════════════════════ -->
+        <div class="card" style="margin-bottom:2rem;">
+            <h2 style="margin-bottom:1rem; font-size:1.1rem;" data-i18n="about_built_title">🛠️ كيف تم بناء المشروع؟</h2>
+            <!-- ▼ البراجراف ده بيتملاه من الـ main.js. -->
+            <p style="color:var(--text-muted); line-height:1.9;" data-i18n="about_built_desc"></p>
+            
+            <div class="tech-badges" style="margin-top: 1.5rem; justify-content: center;">
+                <span class="tech-badge">HTML5</span>
+                <span class="tech-badge">CSS3</span>
+                <span class="tech-badge">Vanilla JS</span>
+                <span class="tech-badge">Chart.js</span>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- ═══ قسم فريق العمل (TEAM SECTION) ══════════════════════════════════
+             الـ section ده بيعرض 3 كروت لأعضاء الفريق باستخدام responsive grid.
+             الـ Desktop هيعرض الـ 3 كروت جنب بعض، والـ Mobile هيعرضهم كارت تحت كارت.
+        ════════════════════════════════════════════════════════ -->
+        <h2 class="section-title text-center" data-i18n="team_title" style="margin-bottom:0.4rem;">👥 فريق العمل</h2>
+        <p style="text-align:center; color:var(--text-muted); margin-bottom:2rem;" data-i18n="about_team_sub">
+            طلاب نظم معلومات – الفرقة الرابعة
+        </p>
+
+        <!-- ══ كروت تفاصيل فريق العمل ══════════════════════════════════════════
+             كل كارت جواه PHOTO PLACEHOLDER (يعني مكان وهمي للصورة المؤقتة).
+             *** هام جداً لكل من يهمه الأمر: 
+             علشان تحط "صور التيم اللي عملوا الموقع"، لازم تتبع الخطوات الموجودة في الكومنت اللي جوه كل كارت. ***
+             ══════════════════════════════════════════════════════════ -->
+        <div class="team-grid">
+
+            <!-- ════════════════════════════════════════════════════════
+                 👤 العضو الأول – Ahmed Ali Riad
+                 ════════════════════════════════════════════════════════
+                 📸 إزاي تحط "صور التيم اللي عملوا الموقع" وتحديداً صورة Ahmed:
+                 ──────────────────────────────────────────────────────
+                 خطوة 1: هتحط ملف الصورة في الفولدر ده:
+                           assets/images/ahmed_ali.jpg
+                 خطوة 2: تحذف الجزء اللي اسمه <div class="team-photo-placeholder"> لحد </div> اللي تحته.
+                 خطوة 3: تقوم حاطط الكود ده بتاع التاج <img> في مكانه:
+
+                   <img src="assets/images/ahmed_ali.jpg"
+                        alt="Ahmed Ali Riad"
+                        style="width:100px;height:100px; border-radius:10px; object-fit:cover; margin:0 auto 1.25rem; display:block;">
+                 ════════════════════════════════════════════════════════ -->
+            <div class="team-card">
+                <img src="assets/images/ahmed ali.png" alt="Ahmed Ali Riad" style="width:130px;height:130px; border-radius:15px; object-fit:cover; margin:0 auto 1.5rem; display:block;">
+                <div class="team-name" data-i18n="team2_name">Ahmed Ali Riad</div>
+                <div class="team-field" data-i18n="team2_dept">Information Systems – 4th Year</div>
+                <span class="team-role" data-i18n="team2_role">Mobile App Developer &amp; UI/UX</span>
+                <p class="team-detail" data-i18n="team2_detail">Responsible for mobile app development and interactive UI/UX design.</p>
+            </div>
+
+            <!-- ════════════════════════════════════════════════════════
+                 👤 العضو التاني – Youssef Samir Kamal (اللي في النص)
+                 ════════════════════════════════════════════════════════
+                 📸 إزاي تحط صورتك يا Youssef (صور التيم اللي عملوا الموقع):
+                 ──────────────────────────────────────────────────────
+                 خطوة 1: هتحط صورتك في الفولدر ده: assets/images/youssef.jpg
+                 خطوة 2: هتمسح الـ <div class="team-photo-placeholder"> لحد </div>.
+                 خطوة 3: هتحط تاج الـ <img> ده في نفس المكان:
+                   <img src="assets/images/youssef.jpg" alt="Youssef Samir Kamal" style="width:100px;height:100px; border-radius:10px; object-fit:cover; margin:0 auto 1.25rem; display:block;">
+                 ════════════════════════════════════════════════════════ -->
+            <div class="team-card">
+                <img src="assets/images/youssef samir.jpg" alt="Youssef Samir Kamal" style="width:130px;height:130px; border-radius:15px; object-fit:cover; margin:0 auto 1.5rem; display:block;">
+                <div class="team-name" data-i18n="team1_name">Youssef Samir Kamal</div>
+                <div class="team-field" data-i18n="team1_dept">Information Systems – 4th Year</div>
+                <span class="team-role" data-i18n="team1_role">Web Design &amp; Data Analysis</span>
+                <p class="team-detail" data-i18n="team1_detail">Responsible for UI design, user experience, and analyzing quiz results and data.</p>
+            </div>
+
+            <!-- ════════════════════════════════════════════════════════
+                 👤 العضو التالت – Ahmed Ashraf Shalaby
+                 ════════════════════════════════════════════════════════
+                 📸 علشان نحط صورة Ahmed Ashraf (من صور التيم اللي عملوا الموقع):
+                 ──────────────────────────────────────────────────────
+                 خطوة 1: احفظ صورتك في assets/images/ahmed_ashraf.jpg
+                 خطوة 2: زي اللي فات، امسح الـ team-photo-placeholder.
+                 خطوة 3: حط التاج ده:
+                   <img src="assets/images/ahmed_ashraf.jpg" alt="Ahmed Ashraf Shalaby" style="width:100px;height:100px; border-radius:10px; object-fit:cover; margin:0 auto 1.25rem; display:block;">
+                 ════════════════════════════════════════════════════════ -->
+            <div class="team-card">
+                <img src="assets/images/ahmed ashraf .jpeg" alt="Ahmed Ashraf Shalaby" style="width:130px;height:130px; border-radius:15px; object-fit:cover; margin:0 auto 1.5rem; display:block;">
+                <div class="team-name" data-i18n="team3_name">Ahmed Ashraf Shalaby</div>
+                <div class="team-field" data-i18n="team3_dept">Information Systems – 4th Year</div>
+                <span class="team-role" data-i18n="team3_role">Front-end Developer</span>
+                <p class="team-detail" data-i18n="team3_detail">Responsible for building the site structure, quiz logic, and results page with JavaScript.</p>
+            </div>
+
+        </div>
+
+        <!-- ═══ أزرار الدعوة للإجراء (CTA) ══════════════════════════════════════════
+             الزرار ده بينقلك لصفحة الاختبار.
+        ════════════════════════════════════════════════════════ -->
+        <div style="text-align:center; margin:3rem 0 1rem;">
+            <a href="assessment.html" class="btn btn-primary" data-i18n="about_cta">📝 جرّب الاختبار الآن</a>
+        </div>
+
+    </div>
+
+    <!-- ═══ الـ FOOTER ════════════════════════════════════════════
+         حقوق النشر اللي بتترجم باستخدام دالة الـ JS.
+    ════════════════════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <p data-i18n="footer_text">© 2025 Career Path Navigator – مشروع تعليمي</p>
+    </footer>
+
+    <!-- بنحمل الـ theme.js الأول علشان ما يحصلش أي فلاشينج في الـ dark mode أول ما الصفحة تفتح -->
+    <script src="js/theme.js"></script>
+    <!-- بنحمل الـ main.js التاني علشان هو المسئول عن الترجمة (translations) وتفاعلات الـ navbar -->
+    <script src="js/main.js"></script>
+</body>
+</html>

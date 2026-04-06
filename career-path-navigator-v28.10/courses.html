@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<!-- ═══════════════════════════════════════════════════════
+         إعدادات الـ META والصفحة (META & PAGE SETUP)
+    ═══════════════════════════════════════════════════════════ -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Career Path Navigator – كورسات وموارد تعليمية لجميع المسارات المهنية" name="description"/>
+<title data-i18n="page_title_courses">Career Path Navigator | الكورسات</title>
+<link href="css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<!-- ═══════════════════════════════════════════════════════════════
+         الشريط العلوي (NAVBAR)
+         التقسيمة (Layout): [زراير التحكم (شمال)] ── [الشعار (في النص)] ── [روابط التنقل (يمين)]
+         ترتيب الروابط: الرئيسية (Home) → الاختبار (Assessment) → عن الموقع (About)
+    ═══════════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+<!-- Language & Theme buttons (left side) -->
+<div class="nav-controls">
+<button class="ctrl-btn" id="langToggle">🌐 EN</button>
+<button class="ctrl-btn" id="themeToggle">🌙 Dark</button>
+</div>
+<!-- Hamburger button – visible on mobile only -->
+<button aria-label="Toggle menu" class="hamburger" id="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</button>
+<!-- Website name, centered via CSS position:absolute -->
+<div class="logo"><img src="assets/images/new_image_3.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-inline-end: 8px;">Career Path <span>Navigator</span></div>
+<!-- Nav links (right side): Home → Assessment → About -->
+<ul class="nav-links">
+<li><a data-i18n="nav_home" href="home.html">الرئيسية</a></li>
+<li><a data-i18n="nav_assessment" href="assessment.html">الاختبار</a></li>
+<li><a data-i18n="nav_about" href="about.html">عن المشروع</a></li>
+</ul>
+</nav>
+<!-- ═══════════════════════════════════════════════════════════════
+         رأس الصفحة (PAGE HEADER)
+    ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-header">
+<h1 data-i18n="courses_title">📚 الكورسات التعليمية</h1>
+<p data-i18n="courses_sub">موارد تعليمية منتقاة لكل مسار مهني</p>
+</div>
+<div class="container container-80">
+<!-- ═══════════════════════════════════════════════════════════
+             شريط البحث الذكي (SMART SEARCH BAR)
+        ════════════════════════════════════════════════════════════════ -->
+<div class="search-container">
+    <input type="text" id="courseSearch" placeholder="🔍 ابحث عن كورس (اسم أو وصف)..." autocomplete="off" />
+</div>
+<!-- ═══════════════════════════════════════════════════════════
+             أزرار فلترة الكورسات (FILTER BUTTONS)
+             زرار واحد لكل مجال مهني.
+             لما تدوس على زرار، هيظهر الكورسات التابعة للمجال ده بس.
+             زرار "الكل" (All) بيعرض كل الكورسات مرة واحدة.
+             قيمة الـ data-filter لازم تطابق الـ data-cat بتاع بطاقة الكورس.
+        ════════════════════════════════════════════════════════════════ -->
+<div class="filter-bar">
+<!-- زر "الكل" يعرض جميع الكورسات (All filter button shows all courses) -->
+<button class="filter-btn active" data-filter="all" data-i18n="all_filter">الكل</button>
+<button class="filter-btn" data-filter="programming" data-i18n="tab_programming">البرمجة</button>
+<button class="filter-btn" data-filter="design" data-i18n="tab_design">التصميم</button>
+<button class="filter-btn" data-filter="uiux" data-i18n="tab_uiux">UI/UX</button>
+<button class="filter-btn" data-filter="finearts" data-i18n="tab_finearts">الفنون</button>
+<button class="filter-btn" data-filter="medicine" data-i18n="tab_medicine">الطب</button>
+<button class="filter-btn" data-filter="engineering" data-i18n="tab_engineering">الهندسة</button>
+<button class="filter-btn" data-filter="law" data-i18n="tab_law">الحقوق</button>
+<button class="filter-btn" data-filter="tourism" data-i18n="tab_tourism">السياحة</button>
+</div>
+<!-- ═══════════════════════════════════════════════════════════
+             شبكة بطاقات الكورسات (COURSE CARDS GRID) – 24 بطاقة
+             كل بطاقة بتحتوي على:
+               data-cat = المجال المهني التابع ليه (الـ JS بيستخدمه في الفلترة)
+             كود الفلترة بيعرض/يخفي البطاقات بمقارنة الـ data-cat ده 
+             بالـ data-filter بتاع الزرار النشط دلوقتي.
+
+             مستويات الكورسات (COURSE LEVELS) بتستخدم data-level-key عشان 
+             دالة applyLanguage() في main.js تترجمها من غير الاعتماد على مطابقة النصوص.
+
+             ┌─────────────────────────────────────────────────────────┐
+             │ هيكلة البطاقة (CARD STRUCTURE):                         │
+             │  .course-card[data-cat="..."]                           │
+             │    .course-icon        → أيقونة تعبيرية (emoji icon)    │
+             │    .course-platform    → شارة المنصة (Coursera / Udemy) │
+             │    h3                  → اسم الكورس (course name)       │
+             │    .course-desc        → وصف قصير (short description)   │
+             │    .course-footer                                       │
+             │      .course-level     → مستوى (beginner/inter/adv)     │
+             │      .course-lang      → علم اللغة (language flag emoji)│
+             └─────────────────────────────────────────────────────────┘
+        ════════════════════════════════════════════════════════════════ -->
+<div class="courses-grid" id="coursesGrid">
+<!-- ── PROGRAMMING COURSES (data-cat="programming") ────── -->
+<div class="course-card" data-cat="programming" data-step="1">
+<div class="course-icon">💻</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="1">الخطوة 1</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_programming_1_title">HTML &amp; CSS for Beginners</h3>
+<p class="course-desc" data-i18n="crs_programming_1_desc">أسس بناء صفحات الويب بالـ HTML والـ CSS من الصفر.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/html-css-javascript-for-web-developers" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="programming" data-step="2">
+<div class="course-icon">🎨</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="2">الخطوة 2</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_programming_2_title">Build Responsive Websites</h3>
+<p class="course-desc" data-i18n="crs_programming_2_desc">تصميم مواقع متجاوبة باستخدام CSS Grid وFlexbox.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/responsivedesign" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="programming" data-step="3">
+<div class="course-icon">⚡</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="3">الخطوة 3</span>
+<span class="course-platform">Udemy</span>
+</div>
+<h3 data-i18n="crs_programming_3_title">JavaScript: The Complete Guide</h3>
+<p class="course-desc" data-i18n="crs_programming_3_desc">JavaScript من المبتدئ إلى الاحتراف مع مشاريع فعلية.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.udemy.com/course/the-complete-javascript-course/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="programming" data-step="4">
+<div class="course-icon">🔀</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="4">الخطوة 4</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_programming_4_title">Version Control with Git</h3>
+<p class="course-desc" data-i18n="crs_programming_4_desc">إدارة الكود والتعاون باستخدام Git وGitHub من Atlassian.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/version-control-with-git" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="programming" data-step="5">
+<div class="course-icon">⚛️</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="5">الخطوة 5</span>
+<span class="course-platform">Meta</span>
+</div>
+<h3 data-i18n="crs_programming_5_title">React Developer Certificate</h3>
+<p class="course-desc" data-i18n="crs_programming_5_desc">بناء تطبيقات React احترافية مع Hooks وContext API.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="advanced">🔴 متقدم</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/professional-certificates/meta-front-end-developer" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="programming" data-step="6">
+<div class="course-icon">🚀</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="6">الخطوة 6</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_programming_6_title">Full-Stack Web Development</h3>
+<p class="course-desc" data-i18n="crs_programming_6_desc">بناء ونشر تطبيقات ويب كاملة من IBM.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/professional-certificates/ibm-full-stack-cloud-developer" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="programming" data-step="7">
+<div class="course-icon">🌐</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="7">الخطوة 7</span>
+<span class="course-platform">Udemy</span>
+</div>
+<h3 data-i18n="crs_programming_7_title">Build Your Developer Portfolio</h3>
+<p class="course-desc" data-i18n="crs_programming_7_desc">أنشئ موقع Portfolio احترافي يعرض مهاراتك ومشاريعك.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.udemy.com/course/portfolio-website/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── GRAPHIC DESIGN COURSES (data-cat="design") ─────── -->
+<div class="course-card" data-cat="design" data-step="1">
+<div class="course-icon">🎨</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="1">الخطوة 1</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_design_1_title">Graphic Design Specialization</h3>
+<p class="course-desc" data-i18n="crs_design_1_desc">مبادئ التصميم والطباعة والهوية البصرية من CalArts.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/specializations/graphic-design" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="design" data-step="2">
+<div class="course-icon">✏️</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="2">الخطوة 2</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_design_2_title">Introduction to Typography</h3>
+<p class="course-desc" data-i18n="crs_design_2_desc">أساسيات الخطوط والطباعة والتسلسل الهرمي في النصوص من CalArts.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/typography" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="design" data-step="3">
+<div class="course-icon">🖼️</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="3">الخطوة 3</span>
+<span class="course-platform">Udemy</span>
+</div>
+<h3 data-i18n="crs_design_3_title">Adobe Photoshop CC – Masterclass</h3>
+<p class="course-desc" data-i18n="crs_design_3_desc">تحرير الصور، التركيب الفوتوغرافي، وتصميم الإعلانات.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.udemy.com/course/photoshop-masterclass/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="design" data-step="4">
+<div class="course-icon">🖌️</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="4">الخطوة 4</span>
+<span class="course-platform">Udemy</span>
+</div>
+<h3 data-i18n="crs_design_4_title">Adobe Illustrator CC – Complete</h3>
+<p class="course-desc" data-i18n="crs_design_4_desc">رسم الشعارات والرسوم المتجهية بشكل احترافي.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.udemy.com/course/illustrator-cc-masterclass/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="design" data-step="5">
+<div class="course-icon">💼</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="5">الخطوة 5</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_design_5_title">Brand Identity Design</h3>
+<p class="course-desc" data-i18n="crs_design_5_desc">تصميم هوية بصرية متكاملة: شعار + ألوان + خطوط.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/brand-identity-strategy" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="design" data-step="6">
+<div class="course-icon">📁</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="6">الخطوة 6</span>
+<span class="course-platform">Udemy</span>
+</div>
+<h3 data-i18n="crs_design_6_title">Freelancing for Designers</h3>
+<p class="course-desc" data-i18n="crs_design_6_desc">انشر أعمالك على Behance وDribbble وابدأ العمل الحر.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.udemy.com/course/freelance-graphic-design-masterclass/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── UI/UX COURSES (data-cat="uiux") ──────────────── -->
+<div class="course-card" data-cat="uiux" data-step="1">
+<div class="course-icon">📱</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="1">الخطوة 1</span>
+<span class="course-platform">Google</span>
+</div>
+<h3 data-i18n="crs_uiux_1_title">Google UX Design Certificate</h3>
+<p class="course-desc" data-i18n="crs_uiux_1_desc">مسار شامل لتصميم تجربة المستخدم من Google.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/professional-certificates/google-ux-design" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="uiux" data-step="2">
+<div class="course-icon">🗂️</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="2">الخطوة 2</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_uiux_2_title">Information Architecture &amp; Design</h3>
+<p class="course-desc" data-i18n="crs_uiux_2_desc">تنظيم محتوى المنتج وبناء الهيكل المعلوماتي.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/visual-perception" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="uiux" data-step="3">
+<div class="course-icon">📐</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="3">الخطوة 3</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_uiux_3_title">Wireframing &amp; Prototyping</h3>
+<p class="course-desc" data-i18n="crs_uiux_3_desc">رسم التخطيطات الهيكلية وبناء النماذج الأولية.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="beginner">🟢 مبتدئ</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/high-fidelity-designs-prototype" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="uiux" data-step="4">
+<div class="course-icon">🎯</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="4">الخطوة 4</span>
+<span class="course-platform">Udemy</span>
+</div>
+<h3 data-i18n="crs_uiux_4_title">Figma UI Design Bootcamp</h3>
+<p class="course-desc" data-i18n="crs_uiux_4_desc">Figma من الصفر: Components، Auto-Layout، Prototyping.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.udemy.com/course/figma-ux-ui-design-user-experience-tutorial-course/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="uiux" data-step="5">
+<div class="course-icon">🔬</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="5">الخطوة 5</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_uiux_5_title">UX Research &amp; Usability Testing</h3>
+<p class="course-desc" data-i18n="crs_uiux_5_desc">اختبار النموذج مع مستخدمين حقيقيين وتحليل النتائج.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="intermediate">🟡 متوسط</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/conduct-ux-research" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="uiux" data-step="6">
+<div class="course-icon">📦</div>
+<div class="course-meta-row">
+<span class="course-step-badge" data-step-num="6">الخطوة 6</span>
+<span class="course-platform">Coursera</span>
+</div>
+<h3 data-i18n="crs_uiux_6_title">Design Systems &amp; Portfolio</h3>
+<p class="course-desc" data-i18n="crs_uiux_6_desc">بناء نظام تصميم قابل للتوسع ونشر Case Studies احترافية.</p>
+<div class="course-footer">
+<span class="course-level" data-level-key="advanced">🔴 متقدم</span>
+</div>
+<a class="course-link" href="https://www.coursera.org/learn/high-fidelity-designs-prototypes-figma" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── FINE ARTS COURSES (data-cat="finearts") ───────── -->
+<div class="course-card" data-cat="finearts" data-step="1">
+<div class="course-icon">🎭</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="1">الخطوة 1</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_finearts_1_title">Drawing &amp; Sketching Fundamentals</h3>
+<p class="course-desc" data-i18n="crs_finearts_1_desc">الرسم من الصفر: خطوط، أشكال، منظور، تضليل.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.udemy.com/course/the-ultimate-drawing-course/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="finearts" data-step="2">
+<div class="course-icon">🌈</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="2">الخطوة 2</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_finearts_2_title">Color Theory for Artists</h3>
+<p class="course-desc" data-i18n="crs_finearts_2_desc">دوائر الألوان، التناسق اللوني، والعواطف المرتبطة بالألوان.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.udemy.com/course/color-theory-basics/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="finearts" data-step="3">
+<div class="course-icon">🖌️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="3">الخطوة 3</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_finearts_3_title">Watercolor Painting for Beginners</h3>
+<p class="course-desc" data-i18n="crs_finearts_3_desc">الرسم بالألوان المائية: تقنيات الطبقات والغسيل والتفاصيل.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.udemy.com/course/watercolour-painting/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="finearts" data-step="4">
+<div class="course-icon">📱</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="4">الخطوة 4</span><span class="course-platform">Skillshare</span></div>
+<h3 data-i18n="crs_finearts_4_title">Digital Illustration with Procreate</h3>
+<p class="course-desc" data-i18n="crs_finearts_4_desc">الرسم الرقمي على iPad بأسلوب احترافي.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.skillshare.com/en/classes/digital-illustration-procreate" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="finearts" data-step="5">
+<div class="course-icon">🎨</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="5">الخطوة 5</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_finearts_5_title">Modern &amp; Contemporary Art</h3>
+<p class="course-desc" data-i18n="crs_finearts_5_desc">تاريخ الفن الحديث والمعاصر من MoMA بنيويورك.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/modern-art-ideas" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="finearts" data-step="6">
+<div class="course-icon">💰</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="6">الخطوة 6</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_finearts_6_title">Selling Art Online – Monetize</h3>
+<p class="course-desc" data-i18n="crs_finearts_6_desc">بيع أعمالك الفنية على Etsy وArtStation وInstagram.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.udemy.com/course/sell-art-online/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── MEDICINE COURSES (data-cat="medicine") ─────────── -->
+<div class="course-card" data-cat="medicine" data-step="1">
+<div class="course-icon">🔬</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="1">الخطوة 1</span><span class="course-platform">edX</span></div>
+<h3 data-i18n="crs_medicine_1_title">Introduction to Biology – MIT</h3>
+<p class="course-desc" data-i18n="crs_medicine_1_desc">أساسيات علم الأحياء من معهد ماساتشوستس للتكنولوجيا.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.edx.org/learn/biology/massachusetts-institute-of-technology-introduction-to-biology-the-secret-of-life" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="medicine" data-step="2">
+<div class="course-icon">💊</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="2">الخطوة 2</span><span class="course-platform">Khan Academy</span></div>
+<h3 data-i18n="crs_medicine_2_title">MCAT Test Preparation</h3>
+<p class="course-desc" data-i18n="crs_medicine_2_desc">تحضير شامل لاختبار القبول في كليات الطب الأمريكية.</p>
+<div class="course-footer"><span class="course-level" data-level-key="advanced">🔴 متقدم</span></div>
+<a class="course-link" href="https://www.khanacademy.org/test-prep/mcat" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="medicine" data-step="3">
+<div class="course-icon">🏥</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="3">الخطوة 3</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_medicine_3_title">Medicine in the Digital Age</h3>
+<p class="course-desc" data-i18n="crs_medicine_3_desc">الطب الرقمي والذكاء الاصطناعي في الرعاية الصحية.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/digital-health" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="medicine" data-step="4">
+<div class="course-icon">🩺</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="4">الخطوة 4</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_medicine_4_title">Clinical Problem Solving</h3>
+<p class="course-desc" data-i18n="crs_medicine_4_desc">حل المشكلات السريرية والتشخيص الطبي من UCSF.</p>
+<div class="course-footer"><span class="course-level" data-level-key="advanced">🔴 متقدم</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/clinical-terminology" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="medicine" data-step="5">
+<div class="course-icon">🫀</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="5">الخطوة 5</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_medicine_5_title">Anatomy – University of Michigan</h3>
+<p class="course-desc" data-i18n="crs_medicine_5_desc">علم التشريح البشري من جامعة ميشيغان.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/specializations/anatomy" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="medicine" data-step="6">
+<div class="course-icon">🌍</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="6">الخطوة 6</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_medicine_6_title">Global Health – Harvard</h3>
+<p class="course-desc" data-i18n="crs_medicine_6_desc">الصحة العالمية والسياسات الصحية من جامعة هارفارد.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/specializations/global-health" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── ENGINEERING COURSES (data-cat="engineering") ────── -->
+<div class="course-card" data-cat="engineering" data-step="1">
+<div class="course-icon">📊</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="1">الخطوة 1</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_engineering_1_title">Calculus – University of Pennsylvania</h3>
+<p class="course-desc" data-i18n="crs_engineering_1_desc">حساب التفاضل والتكامل الأساسي للهندسة والعلوم.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/single-variable-calculus" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="engineering" data-step="2">
+<div class="course-icon">⚙️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="2">الخطوة 2</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_engineering_2_title">Introduction to Engineering</h3>
+<p class="course-desc" data-i18n="crs_engineering_2_desc">مقدمة في الهندسة وأنواعها وتطبيقاتها الحديثة.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/mechanics-1" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="engineering" data-step="3">
+<div class="course-icon">🔩</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="3">الخطوة 3</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_engineering_3_title">Engineering Mechanics – Statics</h3>
+<p class="course-desc" data-i18n="crs_engineering_3_desc">ميكانيكا المواد والقوى الهندسية من Georgia Tech.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/engineering-mechanics-statics" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="engineering" data-step="4">
+<div class="course-icon">📐</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="4">الخطوة 4</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_engineering_4_title">AutoCAD Complete Course</h3>
+<p class="course-desc" data-i18n="crs_engineering_4_desc">رسم هندسي رقمي باحتراف باستخدام AutoCAD.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.udemy.com/course/autocad-2d-and-3d-practice-drawings/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="engineering" data-step="5">
+<div class="course-icon">🏗️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="5">الخطوة 5</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_engineering_5_title">Engineering Project Management</h3>
+<p class="course-desc" data-i18n="crs_engineering_5_desc">إدارة المشاريع الهندسية والتدريب الميداني من Rice.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/specializations/project-management" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="engineering" data-step="6">
+<div class="course-icon">🔧</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="6">الخطوة 6</span><span class="course-platform">MIT OCW</span></div>
+<h3 data-i18n="crs_engineering_6_title">Mechanics of Materials – MIT</h3>
+<p class="course-desc" data-i18n="crs_engineering_6_desc">ميكانيكا المواد الهندسية من معهد ماساتشوستس.</p>
+<div class="course-footer"><span class="course-level" data-level-key="advanced">🔴 متقدم</span></div>
+<a class="course-link" href="https://ocw.mit.edu/courses/2-001-mechanics-materials-i-fall-2006/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── LAW COURSES (data-cat="law") ──────────────────── -->
+<div class="course-card" data-cat="law" data-step="1">
+<div class="course-icon">⚖️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="1">الخطوة 1</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_law_1_title">Introduction to Law</h3>
+<p class="course-desc" data-i18n="crs_law_1_desc">مقدمة في القانون ونظرياته وأنواعه من University of London.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/law-student" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="law" data-step="2">
+<div class="course-icon">📜</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="2">الخطوة 2</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_law_2_title">English Common Law</h3>
+<p class="course-desc" data-i18n="crs_law_2_desc">القانون العام الإنجليزي: المبادئ الأساسية والسوابق القضائية.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/common-law" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="law" data-step="3">
+<div class="course-icon">✍️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="3">الخطوة 3</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_law_3_title">Legal Writing &amp; Research</h3>
+<p class="course-desc" data-i18n="crs_law_3_desc">كتابة المذكرات والعرائض القانونية والبحث في السوابق.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/understanding-legal-contracts" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="law" data-step="4">
+<div class="course-icon">🏛️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="4">الخطوة 4</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_law_4_title">International Criminal Law</h3>
+<p class="course-desc" data-i18n="crs_law_4_desc">القانون الجنائي الدولي والمحاكم الدولية من Case Western.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/international-criminal-law" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="law" data-step="5">
+<div class="course-icon">📋</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="5">الخطوة 5</span><span class="course-platform">edX</span></div>
+<h3 data-i18n="crs_law_5_title">Contract Law – HarvardX</h3>
+<p class="course-desc" data-i18n="crs_law_5_desc">قانون العقود وإدارتها من منظور أكاديمي – هارفارد.</p>
+<div class="course-footer"><span class="course-level" data-level-key="advanced">🔴 متقدم</span></div>
+<a class="course-link" href="https://www.edx.org/learn/contract-law/harvard-university-contract-law" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="law" data-step="6">
+<div class="course-icon">🌐</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="6">الخطوة 6</span><span class="course-platform">edX</span></div>
+<h3 data-i18n="crs_law_6_title">International Law – Leiden</h3>
+<p class="course-desc" data-i18n="crs_law_6_desc">القانون الدولي وحقوق الإنسان من Universiteit Leiden.</p>
+<div class="course-footer"><span class="course-level" data-level-key="advanced">🔴 متقدم</span></div>
+<a class="course-link"  target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<!-- ── TOURISM COURSES (data-cat="tourism") ──────────── -->
+<div class="course-card" data-cat="tourism" data-step="1">
+<div class="course-icon">✈️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="1">الخطوة 1</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_tourism_1_title">Tourism &amp; Hospitality Management</h3>
+<p class="course-desc" data-i18n="crs_tourism_1_desc">إدارة السياحة والفنادق وتنظيم الفعاليات.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/hotel-distribution" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="tourism" data-step="2">
+<div class="course-icon">🏺</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="2">الخطوة 2</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_tourism_2_title">Egyptology – UPenn</h3>
+<p class="course-desc" data-i18n="crs_tourism_2_desc">علم المصريات والحضارات القديمة من جامعة بنسلفانيا.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/wonders-ancient-egypt" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="tourism" data-step="3">
+<div class="course-icon">🗣️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="3">الخطوة 3</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_tourism_3_title">English for Tourism &amp; Hospitality</h3>
+<p class="course-desc" data-i18n="crs_tourism_3_desc">إنجليزي متخصص للسياحة والضيافة.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link"  target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="tourism" data-step="4">
+<div class="course-icon">🗺️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="4">الخطوة 4</span><span class="course-platform">Udemy</span></div>
+<h3 data-i18n="crs_tourism_4_title">Tour Guiding Essentials</h3>
+<p class="course-desc" data-i18n="crs_tourism_4_desc">مهارات الإرشاد السياحي والتعامل مع المجموعات.</p>
+<div class="course-footer"><span class="course-level" data-level-key="beginner">🟢 مبتدئ</span></div>
+<a class="course-link" href="https://www.udemy.com/course/tour-guide-training/" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="tourism" data-step="5">
+<div class="course-icon">🌿</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="5">الخطوة 5</span><span class="course-platform">Coursera</span></div>
+<h3 data-i18n="crs_tourism_5_title">Sustainable Tourism</h3>
+<p class="course-desc" data-i18n="crs_tourism_5_desc">السياحة المستدامة والمسؤولة من Wageningen University.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link"  target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+<div class="course-card" data-cat="tourism" data-step="6">
+<div class="course-icon">🏛️</div>
+<div class="course-meta-row"><span class="course-step-badge" data-step-num="6">الخطوة 6</span><span class="course-platform">edX</span></div>
+<h3 data-i18n="crs_tourism_6_title">Egyptian Heritage &amp; Antiquities</h3>
+<p class="course-desc" data-i18n="crs_tourism_6_desc">التراث الأثري المصري ومواقع اليونسكو.</p>
+<div class="course-footer"><span class="course-level" data-level-key="intermediate">🟡 متوسط</span></div>
+<a class="course-link" href="https://www.coursera.org/learn/wonders-ancient-egypt" target="_blank" rel="noopener" data-i18n="watch_btn">شاهد الكورس</a>
+</div>
+</div>
+<!-- End courses-grid -->
+</div>
+<!-- End container -->
+<!-- ═══ FOOTER ════════════════════════════════════════════ -->
+<footer class="site-footer">
+<p data-i18n="footer_text">© 2025 Career Path Navigator – مشروع تعليمي</p>
+</footer>
+<!-- ══════════════════════════════════════════════════════════════
+         قم بتحميل theme.js ثم main.js قبل سكربت الفلترة (BEFORE inline script).
+         ده بيضمن إن دالة applyLanguage() اتعرفت واشتغلت على DOMContentLoaded
+         قبل ما سكربت الفلترة يشتغل، علشان مستويات الكورسات تترجم أول ما الصفحة تفتح.
+    ══════════════════════════════════════════════════════════════════ -->
+<script src="js/theme.js"></script>
+<script src="js/main.js"></script>
+<!-- ══════════════════════════════════════════════════════════════
+         جافاسكريبت الفلترة (FILTER JAVASCRIPT)
+         بيقرأ الـ query param (?cat=) في الرابط أو بيقرأ الزرار النشط عشان
+         يعرض الكورسات اللي بتطابق المجال اللي اختاره المستخدم بس.
+
+         الخوارزمية (Algorithm):
+         1. على الـ DOMContentLoaded: بيقرأ الـ ?cat= من الرابط لو موجود،
+            وبيدوس على الزرار بتاعها تلقائي عشان يشغله (auto-activate).
+         2. لما تدوس على أي زرار فلترة (filter-btn click):
+            – بيخلي الزرار ده .active، وبيمسح الـ .active من الباقيين.
+            – بيلف على كل بطاقات الكورسات (.course-card):
+                • لو الفلتر === 'all' → يعرض الكل.
+                • غير كده: يعرض البطاقة بس لو الـ data-cat بتاعها === الفلتر.
+         3. بعد كل تغيير للفلتر: بيستدعي applyLanguage() تاني علشان 
+            شارات المستويات (course-level) تفضل مترجمة للغة الحالية.
+    ══════════════════════════════════════════════════════════════════ -->
+<script>
+        /* تخزين العناصر المستخدمة بكثرة (Cache frequently used elements) */
+        var filterBtns = document.querySelectorAll('.filter-btn');
+        var cards      = document.querySelectorAll('.course-card');
+
+        /* دالة الفلترة والمتوافقة مع البحث (Filter function compatible with Search) */
+        function applyFilter(filter) {
+            /* تحديث الزر النشط (Update active button state) */
+            filterBtns.forEach(function (b) {
+                b.classList.toggle('active', b.getAttribute('data-filter') === filter);
+            });
+
+            var searchInput = document.getElementById('courseSearch');
+            var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            /* إظهار/إخفاء كل بطاقة بناءً على التصفية والبحث
+               (Show/hide cards based on both Cat Filter and Search query) */
+            cards.forEach(function (card) {
+                var catMatch = filter === 'all' || card.getAttribute('data-cat') === filter;
+                var textMatch = true;
+                
+                if (query !== '') {
+                    var title = card.querySelector('h3').textContent.toLowerCase();
+                    var desc = card.querySelector('.course-desc').textContent.toLowerCase();
+                    if (title.indexOf(query) === -1 && desc.indexOf(query) === -1) {
+                        textMatch = false;
+                    }
+                }
+
+                card.style.display = (catMatch && textMatch) ? '' : 'none';
+            });
+
+            /* إعادة تطبيق اللغة بعد الفلترة */
+            if (typeof applyLanguage === 'function') {
+                applyLanguage(localStorage.getItem('lang') || 'ar');
+            }
+        }
+
+        /* ربط حدث النقر على أزرار الفلترة */
+
+        /* ربط حدث النقر بكل زر فلتر (Attach click handler to each filter button) */
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                applyFilter(btn.getAttribute('data-filter'));
+            });
+        });
+
+        /* عند تحميل الصفحة: قراءة ?cat= من URL والفلترة تلقائياً
+           results.js يمرر topCareer كـ cat= لتوجيه المستخدم للكورسات المناسبة
+           (On page load: read ?cat= URL parameter and auto-filter.
+           results.js passes topCareer as cat= to direct user to relevant courses.) */
+        window.addEventListener('DOMContentLoaded', function () {
+            var params = new URLSearchParams(window.location.search);
+            var cat    = params.get('cat');
+            if (cat) {
+                /* ابحث عن الزر الذي يطابق ?cat= (Find button matching ?cat= param) */
+                var match = document.querySelector('[data-filter="' + cat + '"]');
+                if (match) {
+                    applyFilter(cat);
+                    return;
+                }
+            }
+            /* الافتراضي: عرض الكل (Default: show all courses) */
+            applyFilter('all');
+        });
+
+        /* حدث مخصص للبحث عند الكتابة (Search Input Event Listener) */
+        var searchInput = document.getElementById('courseSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                var activeFilter = document.querySelector('.filter-btn.active');
+                var currentFilter = activeFilter ? activeFilter.getAttribute('data-filter') : 'all';
+                applyFilter(currentFilter);
+            });
+        }
+    </script>
+</body>
+</html>

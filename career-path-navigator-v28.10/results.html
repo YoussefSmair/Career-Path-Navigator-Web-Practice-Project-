@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- ═══════════════════════════════════════════════════════
+         إعدادات الـ META والصفحة (META & PAGE SETUP)
+    ═══════════════════════════════════════════════════════════ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Career Path Navigator – نتائج الاختبار وتوصيات المسار المهني">
+    <title>Career Path Navigator | النتائج</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- استدعاء مكتبة Chart.js من CDN – مطلوبة لرسم الرسم البياني الراداري (radar chart) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         الشريط العلوي (NAVBAR)
+         التقسيمة (Layout): [زراير التحكم (شمال)] ── [الشعار (في النص)] ── [روابط التنقل (يمين)]
+         ترتيب الروابط: الرئيسية (Home) → الاختبار (Assessment) → عن الموقع (About)
+    ═══════════════════════════════════════════════════════════════════ -->
+    <nav class="navbar">
+        <!-- زراير اللغة والوضع الليلي (Language & Theme buttons - left side) -->
+        <div class="nav-controls">
+            <button id="langToggle" class="ctrl-btn">🌐 EN</button>
+            <button id="themeToggle" class="ctrl-btn">🌙 Dark</button>
+        </div>
+        <!-- القائمة الجانبية للموبايل (Hamburger button – visible on mobile only) -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <!-- اسم الموقع، متسنتر عن طريق الـ CSS (Website name, centered via CSS) -->
+        <div class="logo"><img src="assets/images/new_image_3.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-inline-end: 8px;">Career Path <span>Navigator</span></div>
+        <!-- روابط التنقل (Nav links - right side): الرئيسية → الاختبار → عن الموقع -->
+        <ul class="nav-links">
+            <li><a href="home.html" data-i18n="nav_home">الرئيسية</a></li>
+            <li><a href="assessment.html" data-i18n="nav_assessment">الاختبار</a></li>
+            <li><a href="about.html" data-i18n="nav_about">عن المشروع</a></li>
+        </ul>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         العنوان الرئيسي للنتائج (RESULTS HERO)
+         عنوان ووصف صفحة النتائج.
+         بتترجم أوتوماتيك باستخدام data-i18n.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div class="results-hero">
+        <h1 data-i18n="results_title">🎉 نتيجتك</h1>
+        <p data-i18n="results_sub">بناءً على إجاباتك، هذا هو المسار المهني الأنسب لك</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         شبكة النتائج الرئيسية (MAIN RESULTS GRID)
+         عمودين: كارت الشخصية (الشمال) + الرسم البياني (اليمين).
+         على الموبايل، العمودين دول بييجوا تحت بعض (stack vertically).
+         كل المحتوى هنا بيتحقن ديناميكياً عن طريق results.js.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div class="results-layout">
+
+        <!-- العمود الأيسر: بطاقة الشخصية (LEFT COLUMN: Persona Card)
+             بيعرض أيقونة أعلى مسار مناسب، العنوان، الوصف،
+             وزر بيحول لخارطة الطريق التعليمية للمسار ده.
+             ملف results.js بيملى: careerEmoji, careerTitle, careerDesc -->
+        <div class="persona-card">
+            <!-- أيقونة المسار – من نتائج الاختبار بالـ JS -->
+            <span class="career-emoji" id="careerEmoji">💻</span>
+            <!-- عنوان المسار – من الـ JS (مثال: "البرمجة") -->
+            <h2 id="careerTitle">المسار الأنسب</h2>
+            <!-- وصف المسار – من الـ JS -->
+            <p id="careerDesc">جار التحليل...</p>
+            <!-- زر التوجيه لخارطة الطريق (roadmap.html) الخاصة بالمسار الأنسب -->
+            <a href="roadmap.html" id="roadmapBtn" class="btn btn-primary" data-i18n="view_roadmap">عرض خارطة التعلم 🗺️</a>
+        </div>
+
+        <!-- العمود الأيمن: الرسم البياني (RIGHT COLUMN: Radar Chart)
+             مكتبة Chart.js بترسم رسم بياني راداري (8 محاور) هنا.
+             عنصر الـ canvas مطلوب لعمل Chart.js.
+             المحاور: البرمجة، التصميم، UI/UX، الفنون،
+                     الطب، الهندسة، الحقوق، السياحة -->
+        <div class="chart-wrapper">
+            <!-- الـ Canvas اللي بيترسم عليه الرسم البياني -->
+            <canvas id="radarChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         أفضل المسارات الموصى بها (TOP PATH CARDS)
+         بيعرض أفضل مسارين موصى بيهم بناءً على النتيجة في شكل كروت.
+         ملف results.js بيعمل حقن للكروت دي في حاوية #pathsContainer.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div class="top-paths">
+        <h3 data-i18n="top_paths_title">📌 المسارات الموصى بها</h3>
+        <!-- ملف results.js هيحط الكروت الموصى بيها هنا ديناميكياً -->
+        <div class="paths-grid" id="pathsContainer"></div>
+    </div>
+
+    <!-- زر إعادة الاختبار (Retake Quiz Button) – بيخلي اليوزر يبدأ من جديد -->
+    <div style="text-align:center; padding: 1rem 1rem 3rem;">
+        <a href="assessment.html" class="btn btn-outline">🔄 إعادة الاختبار</a>
+    </div>
+
+    <!-- ═══ الفوتر (FOOTER) ════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <p data-i18n="footer_text">© 2025 Career Path Navigator – مشروع تعليمي</p>
+    </footer>
+
+    <!-- ترتيب استدعاء ملفات الجافاسكريبت (Scripts load order):
+         1. theme.js   – بيطبق الوضع الفاتح/الليلي المحفوظ.
+         2. main.js    – بيطبق اللغة المحفوظة وبيظبط النصوص.
+         3. results.js – بيقرأ نتايج الاختبار من الذاكرة المحلية (localStorage) وبيرسم الرسم البياني.
+         ملاحظة: الـ CDN بتاع Chart.js متحمل فوق في الـ <head> علشان يكون متاح لـ results.js. -->
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/results.js"></script>
+
+</body>
+</html>

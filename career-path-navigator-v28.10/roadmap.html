@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<!-- ═══════════════════════════════════════════════════════
+         إعدادات الـ META والصفحة (META & PAGE SETUP)
+    ═══════════════════════════════════════════════════════════ -->
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Career Path Navigator – خارطة التعلم لجميع المسارات المهنية" name="description"/>
+<title data-i18n="page_title_roadmap">Career Path Navigator | خارطة التعلم</title>
+<link href="css/style.css" rel="stylesheet"/>
+<style>
+        /* كل لوحة من لوحات خارطة الطريق مخفية بشكل افتراضي (hidden by default).
+           فقط اللوحة اللي واخده كلاس .active هي اللي بتظهر.
+           بيتم تبديل الكلاس بواسطة سكربت الـ tab-switcher تحت. */
+        .roadmap-content { display: none; }
+        .roadmap-content.active { display: block; }
+    </style>
+</head>
+<body>
+<!-- ═══════════════════════════════════════════════════════════════
+         الشريط العلوي (NAVBAR)
+         التقسيمة (Layout): [زراير التحكم (شمال)] ── [الشعار (في النص)] ── [روابط التنقل (يمين)]
+         ترتيب الروابط: الرئيسية (Home) → الاختبار (Assessment) → عن الموقع (About)
+    ═══════════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+<!-- Language & Theme buttons (left side) -->
+<div class="nav-controls">
+<button class="ctrl-btn" id="langToggle">🌐 EN</button>
+<button class="ctrl-btn" id="themeToggle">🌙 Dark</button>
+</div>
+<!-- Hamburger button – visible on mobile only -->
+<button aria-label="Toggle menu" class="hamburger" id="hamburger">
+<span></span>
+<span></span>
+<span></span>
+</button>
+<!-- Website name, centered via CSS -->
+<div class="logo"><img src="assets/images/new_image_3.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-inline-end: 8px;">Career Path <span>Navigator</span></div>
+<!-- Nav links (right side): Home → Assessment → About -->
+<ul class="nav-links">
+<li><a data-i18n="nav_home" href="home.html">الرئيسية</a></li>
+<li><a data-i18n="nav_assessment" href="assessment.html">الاختبار</a></li>
+<li><a data-i18n="nav_about" href="about.html">عن المشروع</a></li>
+</ul>
+</nav>
+<!-- ═══════════════════════════════════════════════════════════════
+         رأس الصفحة (PAGE HEADER)
+    ═══════════════════════════════════════════════════════════════════ -->
+<div class="page-header">
+<h1 data-i18n="roadmap_title">🗺️ خارطة التعلم</h1>
+<p data-i18n="roadmap_sub">اختر مسارك لعرض الخطوات التعليمية التفصيلية</p>
+</div>
+<div class="container container-80">
+<!-- ═══════════════════════════════════════════════════════════
+             تبويبات المسارات (CAREER TABS)
+             8 أزرار، كل زرار لمجال مهني معين.
+             لما تدوس على التبويبة بيعرض لوحة خارطة الطريق الخاصة بيها وبيخفي الباقي.
+             الـ data-tab لازم يطابق الـ id اللي موجود في محتوى اللوحة.
+             الـ data-i18n بيترجم اسم الزرار من خلال main.js.
+        ════════════════════════════════════════════════════════════════ -->
+<div class="roadmap-tabs">
+<button class="tab-btn active" data-i18n="tab_programming" data-tab="programming">البرمجة</button>
+<button class="tab-btn" data-i18n="tab_design" data-tab="design">التصميم</button>
+<button class="tab-btn" data-i18n="tab_uiux" data-tab="uiux">UI/UX</button>
+<button class="tab-btn" data-i18n="tab_finearts" data-tab="finearts">الفنون</button>
+<button class="tab-btn" data-i18n="tab_medicine" data-tab="medicine">الطب</button>
+<button class="tab-btn" data-i18n="tab_engineering" data-tab="engineering">الهندسة</button>
+<button class="tab-btn" data-i18n="tab_law" data-tab="law">الحقوق</button>
+<button class="tab-btn" data-i18n="tab_tourism" data-tab="tourism">السياحة</button>
+</div>
+<!-- ── خارطة البرمجة (PROGRAMMING ROADMAP) ───────────────────────────
+             بتظهر لما تكون تبويبة "البرمجة / Programming" نشطة.
+             كل timeline-item بيعبر عن خطوة في رحلة التعلم.
+             الـ data-step-num بيحفظ رقم الخطوة عشان الترجمة الآمنة للغات. -->
+<div class="roadmap-content active" id="tab-programming">
+<h2 data-i18n="road_h2_programming" style="margin-bottom:1.5rem;color:var(--primary)">💻 Frontend Development Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_programming_s1_title">HTML Basics – أساسيات HTML</h3><p data-i18n="rm_programming_s1_desc">تعلم بنية صفحات الويب: العناصر، الوسوم، النماذج، الجداول.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_programming_s2_title">CSS Styling &amp; Layout</h3><p data-i18n="rm_programming_s2_desc">Flexbox, Grid، الألوان، الخطوط، التصميم المتجاوب Responsive Design.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_programming_s3_title">JavaScript Fundamentals</h3><p data-i18n="rm_programming_s3_desc">المتغيرات، الدوال، الحلقات، الأحداث، DOM manipulation.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_programming_s4_title">Version Control – Git &amp; GitHub</h3><p data-i18n="rm_programming_s4_desc">تعلم إدارة الكود باستخدام Git ونشر المشاريع على GitHub.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_programming_s5_title">React / Vue Framework</h3><p data-i18n="rm_programming_s5_desc">تعلم إطار عمل JavaScript لبناء تطبيقات ويب ديناميكية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_programming_s6_title">Build &amp; Deploy Projects</h3><p data-i18n="rm_programming_s6_desc">أنشئ 3-5 مشاريع حقيقية وانشرها على Netlify أو Vercel.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="7">الخطوة 7</div><h3 data-i18n="rm_programming_s7_title">Portfolio Website</h3><p data-i18n="rm_programming_s7_desc">أنشئ موقع Portfolio احترافي يعرض مهاراتك ومشاريعك.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_programming" href="courses.html?cat=programming">📚 كورسات البرمجة</a></div>
+</div>
+<!-- ── GRAPHIC DESIGN ROADMAP ─────────────────────── -->
+<div class="roadmap-content" id="tab-design">
+<h2 data-i18n="road_h2_design" style="margin-bottom:1.5rem;color:var(--primary)">🎨 Graphic Design Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_design_s1_title">Design Principles – مبادئ التصميم</h3><p data-i18n="rm_design_s1_desc">اللون، التباين، التوازن، الفضاء الأبيض، التسلسل البصري.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_design_s2_title">Typography – الطباعة والخطوط</h3><p data-i18n="rm_design_s2_desc">اختيار الخطوط، التباعد، التسلسل الهرمي في النصوص.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_design_s3_title">Adobe Photoshop</h3><p data-i18n="rm_design_s3_desc">تعديل الصور، تصميم البوسترات، الإعلانات الرقمية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_design_s4_title">Adobe Illustrator / Inkscape</h3><p data-i18n="rm_design_s4_desc">الرسومات المتجهية Vector، تصميم الشعارات والأيقونات.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_design_s5_title">Brand Identity Design</h3><p data-i18n="rm_design_s5_desc">تصميم هوية بصرية متكاملة: شعار + ألوان + خطوط + تطبيقات.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_design_s6_title">Portfolio on Behance &amp; Dribbble</h3><p data-i18n="rm_design_s6_desc">انشر أعمالك وابدأ العمل الحر على Fiverr أو Upwork.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_design" href="courses.html?cat=design">📚 كورسات التصميم</a></div>
+</div>
+<!-- ── UI/UX ROADMAP ──────────────────────────────── -->
+<div class="roadmap-content" id="tab-uiux">
+<h2 data-i18n="road_h2_uiux" style="margin-bottom:1.5rem;color:var(--primary)">📱 UI/UX Design Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_uiux_s1_title">UX Research – بحث تجربة المستخدم</h3><p data-i18n="rm_uiux_s1_desc">User Interviews، Surveys، Competitor Analysis.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_uiux_s2_title">Information Architecture</h3><p data-i18n="rm_uiux_s2_desc">تنظيم محتوى المنتج وبناء الهيكل المعلوماتي.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_uiux_s3_title">Wireframing &amp; Prototyping</h3><p data-i18n="rm_uiux_s3_desc">رسم التخطيطات الهيكلية وبناء النموذج الأولي.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_uiux_s4_title">Figma – Master UI Design</h3><p data-i18n="rm_uiux_s4_desc">تصميم واجهات ديناميكية، Auto-Layout، Components، Variants.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_uiux_s5_title">Usability Testing</h3><p data-i18n="rm_uiux_s5_desc">اختبار النموذج مع مستخدمين حقيقيين وتحليل النتائج.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_uiux_s6_title">Design System &amp; Portfolio</h3><p data-i18n="rm_uiux_s6_desc">بناء نظام تصميم قابل للتوسع ونشر Case Studies احترافية.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_uiux" href="courses.html?cat=uiux">📚 كورسات UI/UX</a></div>
+</div>
+<!-- ── FINE ARTS ROADMAP ──────────────────────────── -->
+<div class="roadmap-content" id="tab-finearts">
+<h2 data-i18n="road_h2_finearts" style="margin-bottom:1.5rem;color:var(--primary)">🖌️ Fine Arts &amp; Illustration Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_finearts_s1_title">Drawing Fundamentals</h3><p data-i18n="rm_finearts_s1_desc">الخطوط، الأشكال، المنظور، التشريح الفني للجسم البشري.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_finearts_s2_title">Color Theory – نظرية الألوان</h3><p data-i18n="rm_finearts_s2_desc">دوائر الألوان، التناسق اللوني، العواطف المرتبطة بالألوان.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_finearts_s3_title">Traditional Media – الوسائط التقليدية</h3><p data-i18n="rm_finearts_s3_desc">الرسم بالقلم الرصاص، الألوان المائية، الأكريلك، الزيتية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_finearts_s4_title">Digital Illustration</h3><p data-i18n="rm_finearts_s4_desc">Procreate، Adobe Fresco، رسم رقمي احترافي على التابلت.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_finearts_s5_title">Develop Your Style</h3><p data-i18n="rm_finearts_s5_desc">جرب أساليب مختلفة وطور أسلوبك الفني الخاص المميز.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_finearts_s6_title">Publish &amp; Monetize</h3><p data-i18n="rm_finearts_s6_desc">Instagram، ArtStation، Etsy لبيع الطباعة الفنية والمنتجات.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_finearts" href="courses.html?cat=finearts">📚 كورسات الفنون</a></div>
+</div>
+<!-- ── MEDICINE ROADMAP ───────────────────────────── -->
+<div class="roadmap-content" id="tab-medicine">
+<h2 data-i18n="road_h2_medicine" style="margin-bottom:1.5rem;color:var(--primary)">🏥 Medicine &amp; Health Sciences Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_medicine_s1_title">Sciences Foundation – العلوم الأساسية</h3><p data-i18n="rm_medicine_s1_desc">أحياء متقدمة، كيمياء عضوية، فيزياء طبية — التأسيس الأكاديمي.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_medicine_s2_title">Pre-Medical Studies</h3><p data-i18n="rm_medicine_s2_desc">MCAT أو الاختبارات المكافئة + اختيار التخصص الطبي المناسب.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_medicine_s3_title">Medical School / Health Program</h3><p data-i18n="rm_medicine_s3_desc">6 سنوات طب بشري أو 4 سنوات في التخصصات الصحية المساندة.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_medicine_s4_title">Clinical Training – التدريب السريري</h3><p data-i18n="rm_medicine_s4_desc">الإقامة في المستشفيات والتعامل مع الحالات الطبية الحقيقية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_medicine_s5_title">Specialization – التخصص</h3><p data-i18n="rm_medicine_s5_desc">اختر تخصصك: جراحة، أطفال، نساء وتوليد، طب طوارئ، وغيرها.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_medicine_s6_title">Licensing &amp; Practice</h3><p data-i18n="rm_medicine_s6_desc">الحصول على الترخيص المهني والعمل في مستشفى أو عيادة خاصة.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_medicine" href="courses.html?cat=medicine">📚 موارد الطب والصحة</a></div>
+</div>
+<!-- ── ENGINEERING ROADMAP ────────────────────────── -->
+<div class="roadmap-content" id="tab-engineering">
+<h2 data-i18n="road_h2_engineering" style="margin-bottom:1.5rem;color:var(--primary)">⚙️ Engineering Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_engineering_s1_title">Mathematics &amp; Physics Foundation</h3><p data-i18n="rm_engineering_s1_desc">حساب تفاضل وتكامل، جبر خطي، فيزياء هندسية متقدمة.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_engineering_s2_title">Choose Your Engineering Track</h3><p data-i18n="rm_engineering_s2_desc">مدنية، ميكانيكية، كهربائية، كيميائية، حاسوبية — اختر تخصصك.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_engineering_s3_title">Engineering Fundamentals</h3><p data-i18n="rm_engineering_s3_desc">ميكانيكا المواد، ديناميكا الحرارة، دوائر كهربائية، برمجة هندسية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_engineering_s4_title">CAD &amp; Engineering Software</h3><p data-i18n="rm_engineering_s4_desc">AutoCAD، SolidWorks، MATLAB، ANSYS حسب تخصصك.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_engineering_s5_title">Internships &amp; Field Projects</h3><p data-i18n="rm_engineering_s5_desc">تدريب صيفي في شركات هندسية وتنفيذ مشاريع ميدانية حقيقية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_engineering_s6_title">Professional Engineering License</h3><p data-i18n="rm_engineering_s6_desc">اجتياز اختبارات الترخيص المهني (PE / SE) والحصول على الشهادة.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_engineering" href="courses.html?cat=engineering">📚 موارد الهندسة</a></div>
+</div>
+<!-- ── LAW ROADMAP ────────────────────────────────── -->
+<div class="roadmap-content" id="tab-law">
+<h2 data-i18n="road_h2_law" style="margin-bottom:1.5rem;color:var(--primary)">⚖️ Law &amp; Legal Studies Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_law_s1_title">Legal Foundations – أسس القانون</h3><p data-i18n="rm_law_s1_desc">نظرية القانون، أنواعه، المصطلحات القانونية الأساسية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_law_s2_title">Core Law Subjects</h3><p data-i18n="rm_law_s2_desc">القانون المدني، التجاري، الجنائي، الدستوري، الإداري.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_law_s3_title">Legal Research &amp; Writing</h3><p data-i18n="rm_law_s3_desc">كتابة المذكرات والعرائض القانونية والبحث في السوابق القضائية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_law_s4_title">Moot Court &amp; Internship</h3><p data-i18n="rm_law_s4_desc">تدريب على المحاكم الصورية والتدريب في مكاتب المحاماة.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_law_s5_title">Bar Exam &amp; Licensing</h3><p data-i18n="rm_law_s5_desc">اجتياز امتحان نقابة المحامين والحصول على ترخيص المزاولة.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_law_s6_title">Specialize – التخصص القانوني</h3><p data-i18n="rm_law_s6_desc">محاماة، القضاء، الاستشارات، القانون الدولي، حقوق الإنسان.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_law" href="courses.html?cat=law">📚 موارد الحقوق</a></div>
+</div>
+<!-- ── TOURISM ROADMAP ────────────────────────────── -->
+<div class="roadmap-content" id="tab-tourism">
+<h2 data-i18n="road_h2_tourism" style="margin-bottom:1.5rem;color:var(--primary)">✈️ Tourism &amp; Tour Guiding Roadmap</h2>
+<div class="roadmap-timeline">
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="1">الخطوة 1</div><h3 data-i18n="rm_tourism_s1_title">Tourism Fundamentals – أساسيات السياحة</h3><p data-i18n="rm_tourism_s1_desc">أنواع السياحة، صناعة الضيافة، الجغرافيا السياحية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="2">الخطوة 2</div><h3 data-i18n="rm_tourism_s2_title">History &amp; Heritage – التاريخ والتراث</h3><p data-i18n="rm_tourism_s2_desc">الحضارات القديمة، المواقع الأثرية، التراث الإنساني لليونسكو.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="3">الخطوة 3</div><h3 data-i18n="rm_tourism_s3_title">Languages – اللغات</h3><p data-i18n="rm_tourism_s3_desc">إتقان لغة ثانية وثالثة — الإنجليزية، الفرنسية، الإسبانية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="4">الخطوة 4</div><h3 data-i18n="rm_tourism_s4_title">Tour Planning &amp; Management</h3><p data-i18n="rm_tourism_s4_desc">تخطيط جولات سياحية، إدارة المجموعات، التعامل مع الطوارئ.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="5">الخطوة 5</div><h3 data-i18n="rm_tourism_s5_title">Practical Training – التدريب الميداني</h3><p data-i18n="rm_tourism_s5_desc">تدريب في وكالات سياحة ومواقع أثرية مع مجموعات حقيقية.</p></div></div>
+<div class="timeline-item"><div class="timeline-card"><div class="step-tag" data-step-num="6">الخطوة 6</div><h3 data-i18n="rm_tourism_s6_title">Tour Guide License</h3><p data-i18n="rm_tourism_s6_desc">الحصول على ترخيص المرشد السياحي الرسمي والبدء في العمل.</p></div></div>
+</div>
+<div style="text-align:center;margin-top:2rem"><a class="btn btn-primary" data-i18n="roadmap_link_tourism" href="courses.html?cat=tourism">📚 موارد السياحة</a></div>
+</div>
+</div><!-- end container -->
+<!-- ═══ الفوتر (FOOTER) ════════════════════════════════════════════ -->
+<footer class="site-footer">
+<p data-i18n="footer_text">© 2025 Career Path Navigator – مشروع تعليمي</p>
+</footer>
+<!-- ═══════════════════════════════════════════════════════════════
+         جافاسكريبت التبويبات (TAB SWITCHER JAVASCRIPT)
+         بيتحكم في الضغط على زراير التبويبات لإظهار/إخفاء لوحات الخارطة.
+         وبيقرا كمان الـ URL ?tab= أو الـ topCareer المتسجل في الـ localStorage 
+         علشان يختار التبويبة الصح أوتوماتيك لما اليوزر يوصل من صفحة النتائج.
+
+         ملاحظة: بيتم تحميل theme.js و main.js قبل ما الـ DOMContentLoaded يتنفذ للسكريبت ده،
+         لأن كل الاسكربتات بتشتغل بعد ما يتم تحليل الـ DOM.
+         دالة applyLanguage() بتتنده جوه main.js على الـ DOMContentLoaded،
+         وبالتالي بيضمن الترجمة الكاملة مع كل تحميل للصفحة.
+    ═══════════════════════════════════════════════════════════════════ -->
+<!-- حمل theme.js الأول، وبعدين main.js — قبل سكربت التبويبات هنا (BEFORE inline tab script) -->
+<script src="js/theme.js"></script>
+<script src="js/main.js"></script>
+<script>
+        /* تخزين جميع أزرار التبويبات ومحتوياتها (Cache all tab buttons and content panels) */
+        var tabBtns     = document.querySelectorAll('.tab-btn');
+        var tabContents = document.querySelectorAll('.roadmap-content');
+
+        /* عند النقر على أي تبويبة: إلغاء تفعيل الكل ثم تفعيل المنقورة
+           (On each tab click: deactivate all, then activate the clicked one) */
+        tabBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                /* إزالة التفعيل من كل الأزرار والمحتويات (Remove active from all buttons and panels) */
+                tabBtns.forEach(function (b) { b.classList.remove('active'); });
+                tabContents.forEach(function (c) { c.classList.remove('active'); });
+                /* تفعيل الزر المنقور والمحتوى المقابل له (Activate clicked button and matching panel) */
+                btn.classList.add('active');
+                var content = document.getElementById('tab-' + btn.getAttribute('data-tab'));
+                if (content) content.classList.add('active');
+                /* إعادة تطبيق اللغة بعد تفعيل التبويبة لضمان ترجمة .step-tag الجديدة
+                   (Re-apply language after tab switch so newly visible .step-tag elements translate) */
+                if (typeof applyLanguage === 'function') {
+                    applyLanguage(localStorage.getItem('lang') || 'ar');
+                }
+            });
+        });
+
+        /* عند تحميل الصفحة: اختيار التبويبة من URL أو localStorage تلقائياً
+           results.js يحفظ أعلى فئة في localStorage ('topCareer')
+           لذا تفتح الخارطة على التبويبة الصحيحة تلقائياً
+           (On page load: auto-select tab from URL param or localStorage.
+           results.js saves top career to localStorage so roadmap opens correctly.) */
+        window.addEventListener('DOMContentLoaded', function () {
+            var params   = new URLSearchParams(window.location.search);
+            var tab      = params.get('tab') || localStorage.getItem('topCareer') || 'programming';
+            var target   = document.querySelector('[data-tab="' + tab + '"]');
+            if (target) target.click();
+            /* تطبيق اللغة مرة أخرى بعد اختيار التبويبة لضمان الترجمة الصحيحة لـ step-tag
+               (Re-apply language after tab selection to guarantee step-tag translation) */
+            if (typeof applyLanguage === 'function') {
+                applyLanguage(localStorage.getItem('lang') || 'ar');
+            }
+        });
+    </script>
+</body>
+</html>

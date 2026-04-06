@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- ═══════════════════════════════════════════════════════
+         إعدادات الـ META والصفحة
+         الـ charset: UTF-8 بيضمن إن الحروف العربي وأي رموز تظهر بشكل سليم
+         الـ viewport: بيخلي الموقع يـ respond ويظبط مقاساته على الـ mobile screens
+         الـ description: ده الوصف اللي بيظهر في نتايج البحث بتاع Google
+    ═══════════════════════════════════════════════════════════ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Career Path Navigator – اكتشف مسارك المهني المناسب">
+    <title>Career Path Navigator | الرئيسية</title>
+
+    <!-- ملف الـ stylesheet الأساسي اللي متخزن فيه الـ variables وتصميم الـ dark mode والـ components -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ══════════════════════════════════════════════════
+           الـ STATS BAR – ده الشريط اللي فيه الأرقام بعد الـ Hero section
+           استخدمنا flex علشان العناصر تتوزع بمسافات متساوية 
+           في كل الشاشات (الـ flex-wrap بيخليها تنزل تحت بعض في الموبايل).
+        ══════════════════════════════════════════════════ */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            padding: 2rem 1.25rem;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-size: 2rem; font-weight: 900;
+            color: var(--primary); display: block; line-height: 1;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+        /* ══════════════════════════════════════════════════
+           الـ CAROUSEL المُصغر لـ 3 فيديوهات
+           فكرة الـ Layout: بنعرض جزء (70%) من الكارت اللي على الطرفين [70% peek] وبنعرض الكارت اللي في النص بالكامل [100% active].
+           الكارت اللي في النص (center) بياخد opacity كاملة و scale(1).
+           أما الكروت الجانبية بتبقى معتمة شوية (opacity 0.55) وأصغر (scale 0.93).
+           وفيه أسهم ونقط علشان الـ navigation بين الكروت (slides).
+           عرض الكروت (Slide widths) بيتم حسابه بالـ JavaScript لما الصفحة بتتحمل.
+        ══════════════════════════════════════════════════ */
+        .testimonials-section {
+            padding: 3.5rem 0 2.5rem;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        .testimonials-section .section-head {
+            text-align: center;
+            padding: 0 1.25rem 2rem;
+        }
+
+        /* الـ Outer container: بيقص الأجزاء الجانبية الزيادة علشان متظهرش.
+           بنشفت الكروت من جوه (inner track) علشان نبين 70% بس من الكروت الجانبية. */
+        .carousel-outer {
+            position: relative;
+            /* الـ overflow: hidden دي مهمة علشان بتقص الـ 30% من الكروت الجانبية اللي برا الكادر */
+            overflow: hidden;
+        }
+
+        /* الـ Track = ده اللي شايل الكروت كلها جمب بعض باستخدام flex row.
+           الـ JS بيحرك الـ element ده يمين وشمال عن طريق الـ translateX علشان يسكرول. */
+        .carousel-track {
+            display: flex;
+            align-items: flex-start;   /* بنعمل top-align علشان لو النص طول الكارت ما يتغيرش طوله ويبوظ الشكل */
+            gap: 1rem;
+            transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+            /* محددناش الـ width هنا — الـ JS هو اللي بيتحكم في الـ translate */
+        }
+
+        /* الكارت الواحد (slide card).
+           الـ min-width بيتظبط من الجافاسكريبت وقت التشغيل.
+           لكن حاطين CSS fallback ≈ 38vw علشان الكروت تبان بشكل مبدئي قبل ما الـ JS يشتغل. */
+        .carousel-slide {
+            min-width: clamp(280px, 62vw, 720px);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* الكارت الأساسي اللي في النص (active): نفس الحجم بس بغير بسيط في الحدود */
+        .carousel-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* الـ Video box: ده المستطيل الغامق اللي جواه تاج الـ <video>.
+           بياخد القيمة بتاعة الـ aspect-ratio 16/9 علشان يحافظ على شكل الفيديو بالعرض في كل الشاشات. */
+        .video-box {
+            position: relative;
+            width: 100%;
+            background: #111;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--border);
+        }
+
+        /* الـ <video> عنصر الفيديو نفسه بيتمدد علشان يملا البوكس بالكود ده */
+        .video-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ▼▼▼ مكان حجز الفيديوهات المؤقت (VIDEO PLACEHOLDER) ▼▼▼
+           الأوفرلاي الرمادي ده بيظهر أوتوماتيك لو ملف الفيديو 
+           (زي assets/videos/video1.mp4) مش موجود في مجلده.
+           بيعرض أيقونة الـ play والمسار المطلوب للملف علشان تعرف مكانه.
+           أول ما تحط ملف الفيديو الحقيقي بيمسح الـ placeholder وبيعرض الفيديو علطول! */
+        .video-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: #777;
+            font-size: 0.8rem;
+            background: var(--surface-2);
+            pointer-events: none; /* بيخلي أي click تمر من خلاله وتروح للفيديو علشان يشتغل */
+        }
+        .video-placeholder .play-icon { font-size: 2.5rem; opacity: 0.45; }
+
+        /* الشرح اللي تحت الكارت (اسم الشخص ودوره).
+           بيظهر بس تحت الكارت النشط اللي في النص (.active). */
+        .slide-caption {
+            margin-top: 0.75rem;
+            text-align: center;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+            min-height: 2.6rem;  /* ده بنديله طول ثابت علشان الـ layout ميطيرش وينط لفوق ولتحت */
+            pointer-events: none;
+        }
+        .carousel-slide.active .slide-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .caption-name { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+        .caption-role { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+        /* ── أسهم التحريك (Navigation Arrows) ──────────────────────────────
+           متسنترة بالطول فوق منطقة الفيديو بالكود بتاع الـ top: 50%.
+           واخدة z-index: 20 علشان تفضل دايماً فوق باقي العناصر وتتقبل الـ clicks. */
+        .carousel-nav {
+            position: relative;  /* بيجمع الـ outer container مع الأسهم في مكان واحد */
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 20;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .carousel-arrow:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .carousel-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* علشان الـ Arabic (RTL layout): السهم اللي بيرجع لورا بيكون على اليمين والسهم الناكست بيكون في الشمال */
+        .arrow-prev { right: 8px; }
+        .arrow-next { left:  8px; }
+
+        /* ── النقط اللي تحت الـ carousel (Dot indicators) ────────────────────────────────
+           بيكون فيه دوت لكل كارت. ولما الكارت يكون active الدوت بتاعته بتاخد اللون الأساسي وتكبر شوية. */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+            padding: 0 0 0.5rem;
+        }
+        .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .dot.active { background: var(--primary); transform: scale(1.35); }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         الـ NAVBAR (شريط التنقل)
+         الـ Layout هنا متقسم: [زراير التحكم في الشمال] ── [اللوجو في النص] ── [لينكات الـ Nav في اليمين]
+         اللوجو متسنتر بالضبط في النص بفضل الـ position:absolute في ملف الـ CSS.
+         ترتيب لينكات الـ Nav في الكود (من الشمال لليمين في الشاشة): الرئيسية ← الاختبار ← عن المشروع
+         بنستخدم الـ class اللي اسمه active علشان نبرز اللينك بتاع الصفحة المفتوحة دلوقتي.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <nav class="navbar">
+        <!-- زراير التحكم في الـ Language والـ Theme – دايماً على الشمال -->
+        <div class="nav-controls">
+            <!-- الزرار ده لما بتدوس عليه بيبدل بين العربي (AR) والإنجليزي (EN).
+                 الكود بتاعه موجود في ملف js/main.js → في جزء الـ langToggle click handler. -->
+            <button id="langToggle"  class="ctrl-btn">🌐 EN</button>
+            <!-- الزرار ده لما بتدوس عليه بيبدل الـ Light والـ Dark mode.
+                 الكود بتاعه موجود في ملف js/theme.js → في جزء الـ themeToggle click handler. -->
+            <button id="themeToggle" class="ctrl-btn">🌙 Dark</button>
+        </div>
+
+        <!-- زرار الـ Hamburger – بيظهر بس في الموبايل علشان يفتح الائمة الجانبية.
+             لما بتضغط عليه، ملف الـ main.js بيعرض الـ nav-links. -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        </button>
+
+        <!-- اسم الموقع – متسنتر بالـ CSS عن طريق الـ position: absolute.
+             من فضلك متحطش margins هنا؛ الـ CSS بيتولى موضوع السنترة بالكامل. -->
+        <div class="logo"><img src="assets/images/new_image_3.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-inline-end: 8px;">Career Path <span>Navigator</span></div>
+
+        <!-- لينكات الـ Nav – محطوطين على اليمين في الـ navbar.
+             الترتيب: الرئيسية ← الاختبار ← عن المشروع
+             بنستخدم هنا الداتا أتربيوت (data-i18n) علشان الـ js يبدل النص مع تغيير اللغة أوتوماتيك. -->
+        <ul class="nav-links">
+            <!-- لينك الرئيسية – حطينا ليه الـ class .active لأن دي الصفحة اللي إحنا فاتحينها -->
+            <li><a href="home.html" class="active" data-i18n="nav_home">الرئيسية</a></li>
+            <!-- لينك الاختبار/الـ Quiz -->
+            <li><a href="assessment.html" data-i18n="nav_assessment">الاختبار</a></li>
+            <!-- لينك صفحة عن المشروع -->
+            <li><a href="about.html" data-i18n="nav_about">عن المشروع</a></li>
+        </ul>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         الـ HERO SECTION
+         منطقة الترحيب الأساسية في الصفحة أو البانر اللطيف اللي فوق ده.
+         كل النصوص بتستخدم data-i18n فبتترجم أوتوماتيك مع الزرار بتاع اللغة.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <header class="hero">
+        <div class="hero-badge" data-i18n="hero_badge">🚀 اكتشف مسارك المهني</div>
+        <h1 data-i18n="hero_title">Career Path <span class="highlight">Navigator</span></h1>
+        <p data-i18n="hero_subtitle">
+            اكتشف المسار المهني الذي يتناسب حقًا مع شخصيتك ومهاراتك من خلال اختبار تفاعلي ذكي.
+        </p>
+        <div class="hero-buttons">
+            <!-- الإجراء الأساسي (Primary action): زرار بينقلك للاختبار -->
+            <a href="assessment.html" class="btn btn-primary" data-i18n="start_btn">ابدأ الاختبار الآن</a>
+            <!-- الإجراء الفرعي (Secondary action): زرار علشان اليوزر يقرا اكتر عن المشروع -->
+            <a href="about.html" class="btn btn-secondary" data-i18n="learn_more_btn">اعرف أكثر</a>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         شريط الإحصائيات (STATS BAR)
+         بيظهر 4 أرقام تلخص المشروع.
+         بنترجم الأرقام باستخدام الأتربيوت الإضافي data-i18n-num اللي بيحول الرقم
+         للحروف العربية (زي ٨) عن طريق إسكريبت الـ main.js.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div class="stats-bar">
+        <div class="stat-item"><span class="stat-number" data-i18n-num="8">8</span><div class="stat-label" data-i18n="stat1_label">مجالات مهنية</div></div>
+        <div class="stat-item"><span class="stat-number" data-i18n-num="15">15</span><div class="stat-label" data-i18n="stat2_label">سؤالاً شاملاً</div></div>
+        <div class="stat-item"><span class="stat-number" data-i18n-num="24">24</span><div class="stat-label" data-i18n="stat3_label">كورس موصى به</div></div>
+        <div class="stat-item"><span class="stat-number" data-i18n="stat4_num">5 دقائق</span><div class="stat-label" data-i18n="stat4_label">مدة الاختبار</div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم طريقة العمل (HOW IT WORKS SECTION)
+         تلات كروت (step-cards) بتشرح طريقة إجراء الاختبار ببساطة خطوة بخطوة.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <section class="how-it-works">
+        <div class="container-wide text-center">
+            <h2 class="section-title" data-i18n="how_title">كيف يعمل الموقع؟</h2>
+            <p class="section-subtitle" data-i18n="how_subtitle">ثلاث خطوات بسيطة لاكتشاف مسارك المهني</p>
+            <div class="steps-grid">
+                <!-- الخطوة رقم 1: تجاوب على الأسئلة -->
+                <div class="step-card">
+                    <span class="step-icon">📝</span>
+                    <div class="step-number-badge" data-i18n-num="1">1</div>
+                    <h3 data-i18n="step1_title">أجب على الأسئلة</h3>
+                    <p data-i18n="step1_desc">أجب عن 15 سؤالاً شاملاً تتعلق باهتماماتك وطريقة تفكيرك.</p>
+                </div>
+                <!-- الخطوة رقم 2: تحليل النتيجة -->
+                <div class="step-card">
+                    <span class="step-icon">🔍</span>
+                    <div class="step-number-badge" data-i18n-num="2">2</div>
+                    <h3 data-i18n="step2_title">نحلل إجاباتك</h3>
+                    <p data-i18n="step2_desc">يحسب الموقع درجاتك في 8 مجالات مهنية مختلفة.</p>
+                </div>
+                <!-- الخطوة رقم 3: استخراج التوصيات والكورسات المناسبة -->
+                <div class="step-card">
+                    <span class="step-icon">🗺️</span>
+                    <div class="step-number-badge" data-i18n-num="3">3</div>
+                    <h3 data-i18n="step3_title">احصل على توصياتك</h3>
+                    <p data-i18n="step3_desc">تحصل على خارطة تعليمية وكورسات مقترحة تناسب مجالك.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم النظرة العامة للمجالات المهنية (CAREER FIELDS PREVIEW)
+         التمن زراير دول، زرار لكل مجال بيدعمه الموقع..
+         ألوان المجالات مكتوبة جوا أكواد הـ CSS في نفس الصفحة دي ومش بتتأثر بالثيم الدارك المطور.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <section style="padding:3rem 1.25rem;background:var(--surface);border-top:1px solid var(--border);">
+        <div class="container-wide text-center">
+            <h2 class="section-title" data-i18n="fields_title">المجالات المهنية التي يغطيها الاختبار</h2>
+            <p class="section-subtitle" style="margin-bottom:2rem;" data-i18n="fields_sub">8 مجالات متنوعة تشمل التقنية، الصحة، الفنون، والقانون</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;justify-content:center;">
+                <span data-i18n="field_programming" style="background:var(--primary-light);color:var(--primary);padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">💻 البرمجة</span>
+                <span data-i18n="field_design" style="background:#fce7f3;color:#be185d;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">🎨 التصميم الجرافيكي</span>
+                <span data-i18n="field_uiux" style="background:#e0f2fe;color:#0369a1;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">📱 UI/UX</span>
+                <span data-i18n="field_finearts" style="background:#fef9c3;color:#854d0e;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">🖌️ الفنون الجميلة</span>
+                <span data-i18n="field_medicine" style="background:#dcfce7;color:#166534;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">🏥 الطب والصحة</span>
+                <span data-i18n="field_engineering" style="background:#fff7ed;color:#c2410c;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">⚙️ الهندسة</span>
+                <span data-i18n="field_law" style="background:#f3f4f6;color:#374151;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">⚖️ الحقوق والقانون</span>
+                <span data-i18n="field_tourism" style="background:#ede9fe;color:#5b21b6;padding:0.5rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:0.9rem;">✈️ السياحة والإرشاد</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         قسم فيديوهات آراء المستخدمين (VIDEO TESTIMONIALS CAROUSEL)
+         طريقة العرض بتشغل 3 فيديوهات في نفس الوقت: 70% | 100% | 70%
+         الكارت الفعال (اللي في النص) بيكون الـ opacity بتاعه 100% وبحجمه الطبيعي scale(1).
+         والكروت الجانبية معتمة شوية وحجمها أصغر scale(0.93).
+
+         ─── إزاي تحط الفيديوهات بتاعتك (مهم جداً!) ──────────────────────
+         لكل فترة/مكان (slot) من الفيديوهات اللي تحت:
+         1. احفظ ملف الفيديو بتاعك جوه الفولدر ده: assets/videos/
+         2. اتأكد إن اسم الملف مطابق للـ src="..." اللي مكتوب في الكود.
+         3. احفظ صورة مصغرة (thumbnail/poster) في الفولدر ده: assets/images/
+         4. مسار الصورة دي لازم يكون في الـ poster="..." اللي في الـ video tag.
+         5. ممكن تعدل الاسم والدور اللي بيظهر تحته في الجزء بتاع .slide-caption.
+         *** تنبيه: ده المكان المخصص لـ "الفيديوهات اللي في الهوم" اللي قولتلي هتحط الفيديوهات اللي لسه هتتصور فيها! ***
+
+         ─── إزاي الـ CAROUSEL ده بيشتغل ───────────────────────────────────
+         • الـ JavaScript اللي تحت بيحسب عرض الـ slides.
+         • لو ضغطت على سهم أو نقطة بيتم استدعاء الـ goTo(index).
+         • لو ضغطت على slide مش هو الـ active، هينقلك ليه.
+         • لو ضغطت على الـ active slide نفسه، الفيديو هيسيبك تتحكم فيه وتعمل play/pause.
+    ══════════════════════════════════════════════════════════════════ -->
+    <section class="testimonials-section">
+        <div class="section-head">
+            <h2 class="section-title" data-i18n="testimonials_title">ماذا يقول مستخدمونا؟</h2>
+            <p class="section-subtitle" data-i18n="testimonials_sub">شاهد كيف ساعد Career Path Navigator طلاباً ومحترفين في اختيار مسارهم</p>
+        </div>
+
+        <!-- الـ carousel-nav بيغلف المنطقة الخارجية والأسهم مع بعض -->
+        <div class="carousel-nav" id="carouselNav">
+
+            <!-- السهم اللي بيرجع لورا (Previous slide) -->
+            <button class="carousel-arrow arrow-prev" id="arrowPrev" aria-label="السابق">&#8249;</button>
+            <!-- السهم اللي بيجيب اللي قدام (Next slide) -->
+            <button class="carousel-arrow arrow-next" id="arrowNext" aria-label="التالي">&#8250;</button>
+
+            <!-- הـ carousel-outer: بيعمل overflow:hidden علشان يخفي الأجزاء اللي طالعة برا -->
+            <div class="carousel-outer" id="carouselOuter">
+
+                <!-- الـ carousel-track: بيجمع كل الـ slides في row واحد.
+                     الـ JS بيحركه باستخدام خاصية الـ transform: translateX(…) -->
+                <div class="carousel-track" id="carouselTrack">
+
+                    <!-- ████████████████████████████████████████████████████████
+                         📹 VIDEO SLOT 1 of 4
+                         ════════════════════════════════════════════════════════
+                         Person: سارة أحمد / Sara Ahmed – جامعة القاهرة
+
+                         ▼ VIDEO FILE → place your file here:
+                               assets/videos/video1.mp4
+
+                         ▼ POSTER/THUMBNAIL → place your image here:
+                               assets/images/poster1.jpg
+                           (Shown while the video is loading)
+
+                         ▼ TO CHANGE NAME OR ROLE:
+                           Edit the text inside .caption-name and .caption-role below.
+
+                         ▼ data-name and data-role are used by JS for accessibility.
+                         ████████████████████████████████████████████████████████ -->
+                    <div class="carousel-slide" data-name="أحمد محمود" data-role="طالب – جامعة القاهرة">
+                        <div class="video-box">
+                            <video controls preload="auto" src="assets/videos/video1.mp4">
+                                متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+                            <div class="video-placeholder">
+                                <span class="play-icon">▶</span>
+                                <span>ضع الفيديو هنا</span>
+                                <small style="opacity:.6">assets/videos/video1.mp4</small>
+                            </div>
+                        </div>
+                        <div class="slide-caption">
+                            <div class="caption-name">أحمد محمود</div>
+                            <div class="caption-role">طالب – جامعة القاهرة</div>
+                        </div>
+                    </div>
+
+                    <!-- ████████████████████████████████████████████████████████
+                         📹 مكان الفيديو التاني (VIDEO SLOT 2 of 4)
+                         ════════════════════════════════════════════════════════
+                         الشخصية: محمد خالد / Mohamed Khaled
+
+                         ▼ مسار ملف الفيديو → assets/videos/video2.mp4
+                         ▼ مسار الصورة المصغرة → assets/images/poster2.jpg
+                         ████████████████████████████████████████████████████████ -->
+                    <div class="carousel-slide" data-name="سارة أحمد" data-role="طالبة – جامعة القاهرة">
+                        <div class="video-box">
+                            <video controls preload="auto" src="assets/videos/video2.mp4">
+                                متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+                            <div class="video-placeholder">
+                                <span class="play-icon">▶</span>
+                                <span>ضع الفيديو هنا</span>
+                                <small style="opacity:.6">assets/videos/video2.mp4</small>
+                            </div>
+                        </div>
+                        <div class="slide-caption">
+                            <div class="caption-name">سارة أحمد</div>
+                            <div class="caption-role">طالبة – جامعة القاهرة</div>
+                        </div>
+                    </div>
+
+                    <!-- ████████████████████████████████████████████████████████
+                         📹 مكان الفيديو التالت (VIDEO SLOT 3 of 4)
+                         ════════════════════════════════════════════════════════
+                         الشخصية: مي عصام / May Essam
+
+                         ▼ ملف الفيديو → assets/videos/video3.mp4
+                         ▼ صورة الفيديو → assets/images/poster3.jpg
+                         ████████████████████████████████████████████████████████ -->
+                    <div class="carousel-slide" data-name="محمد خالد" data-role="مهندس – اتجه لبرمجة الويب">
+                        <div class="video-box">
+                            <video controls preload="auto" src="assets/videos/video3.mp4">
+                                متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+                            <div class="video-placeholder">
+                                <span class="play-icon">▶</span>
+                                <span>ضع الفيديو هنا</span>
+                                <small style="opacity:.6">assets/videos/video3.mp4</small>
+                            </div>
+                        </div>
+                        <div class="slide-caption">
+                            <div class="caption-name">محمد خالد</div>
+                            <div class="caption-role">مهندس – اتجه لبرمجة الويب</div>
+                        </div>
+                    </div>
+
+                    <!-- ▶▶▶ علشان تضيف فيديو خامس: انسخ بلوك كامل من اللى فوق واعمله لزق (paste) هنا ◄◄◄
+                         هتغير مسار الـ src علشان يبقى assets/videos/video4.mp4 وهكذا 
+                         وبرضه الصورة الـ poster لـ poster4.jpg
+                         وبعدها تعدل بيانات الاسم والدور -->
+
+                </div><!-- end carousel-track -->
+            </div><!-- end carousel-outer -->
+        </div><!-- end carousel-nav -->
+
+        <!-- مؤشرات النقط (Dot indicators) – كل سلايد ليها دوت بتظهر أوتوماتيك بالجافا سكريبت -->
+        <div class="carousel-dots" id="carouselDots"></div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         قسم الدعوة للإجراء (CALL TO ACTION / CTA)
+         ده الجزء اللي بيشجع اليوزر إنه يدخل ويبدأ الـ quiz.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <section class="cta-section">
+        <h2 data-i18n="cta_title">مستعد لاكتشاف مسارك؟</h2>
+        <p data-i18n="cta_subtitle">لا تستغرق أكثر من 5 دقائق. جرّب الاختبار الآن مجاناً!</p>
+        <a href="assessment.html" class="btn btn-white" data-i18n="cta_btn">ابدأ الاختبار</a>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         الـ FOOTER
+         الـ copyright text ده بيترجم بالـ main.js عن طريق الداتا أتربيوت: data-i18n="footer_text".
+    ═══════════════════════════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <p data-i18n="footer_text">© 2025 Career Path Navigator – مشروع تعليمي</p>
+    </footer>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         الـ JAVASCRIPT بتاع الـ CAROUSEL
+         بيظبط: حساب عرض شريحة الكارت (slide width)، تحريك الـ track،
+         التعامل مع ضغطات الأسهم (arrow clicks)، النقط (dot clicks)،
+         وضغطات الكروت نفسها بالإضافة للتحريك بالسحب (touch/swipe) على الموبايل.
+    ══════════════════════════════════════════════════════════════════ -->
+    <script>
+    /* ─────────────────────────────────────────────────────────
+       شرح الرياضة (Math Explained) بتاعة الـ COMPACT 3-VISIBLE CAROUSEL
+       ─────────────────────────────────────────────────────────
+       الهدف: نطلع الكارت بنسبة 0.7 عرض | 1 عرض (في النص) | 0.7 عرض
+       بكدة مساحة الرؤية الكلية = 2.4 * W (عرض الكارت) = outerWidth
+       علشان كده: بنحسب الـ slideWidth W = outerWidth / 2.4
+
+       ولما نتحرك على كارت الاندكس i الكود بيعمل شيفت بحيث:
+         • الكارت [i] يبقى في النص بالظبط (centered)
+         • الكارت اللي قبله واللي بعده يبان منهم 70% بس.
+
+       الخطوة بين الكروت (Step) = عرض الكارت W + الـ gap (اللى هي 16 بيكسل)
+       مقدار الشيفت (Shift) = (رقم الاندكس * الخطوة) مطروح منه 0.7 * مساحة الكارت
+       (وبنقفله عند الصفر علشان مايشفتش ورا الفاضي قبل الكارت الأول)
+    ───────────────────────────────────────────────────────── */
+
+    /* بنعمل تخزين مؤقت لمرجع عناصر الـ DOM اللي بنستخدمها كتير علشان الأداء يكون أسرع */
+    var outer   = document.getElementById('carouselOuter');
+    var track   = document.getElementById('carouselTrack');
+    var dotsWrap= document.getElementById('carouselDots');
+    var prevBtn = document.getElementById('arrowPrev');
+    var nextBtn = document.getElementById('arrowNext');
+    var slides  = Array.from(document.querySelectorAll('.carousel-slide'));
+    var total   = slides.length;   /* ده بيديلنا إجمالي عدد فيديوهات الـ slides */
+    var current = 1;               /* بنبدأ من الفيديو التاني (اللي في النص) */
+    var GAP     = 16;              /* المسافة بين الكروت بالبيكسل واللى بتساوي 1rem في الـ CSS */
+
+    /* ── بنحسب الـ slide width بناءً على العرض الخارجي ──────── */
+    function slideWidth() {
+        /* بنقسم العرض الكلي على 1.55 علشان كل فيديو ياخد حوالي 65% من عرض الصفحة */
+        return Math.floor(outer.offsetWidth / 1.55);
+    }
+
+    /* ── بنطبق العرض اللي حسبناه على كل عنصر ─────── */
+    function applyWidths() {
+        var w = slideWidth();
+        slides.forEach(function (s) {
+            s.style.minWidth = w + 'px';
+        });
+    }
+
+    /* ── بنكريّت نقط الـ indicators أوتوماتيك ───────────────── */
+    slides.forEach(function (_, i) {
+        var dot = document.createElement('button');
+        dot.className = 'dot' + (i === 1 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+        /* لما بنضغط على النقطة بياخدنا للسلايد الموازية ليها */
+        dot.addEventListener('click', function () { goTo(i); });
+        dotsWrap.appendChild(dot);
+    });
+
+    /* ── دالة الانتقال لكارت معين بالـ index بتاعه ───────────── */
+    function goTo(index) {
+        /* بنعمل Circular wrap-around: بحيث لو وصل للآخر ودوست التالي يرجع للأول والعكس صحيح */
+        index = ((index % total) + total) % total;
+        current = index;
+
+        var W    = slideWidth();
+        var step = W + GAP;
+        var isRTL = document.documentElement.dir === 'rtl';
+
+        /* بنحسب هنحرك الـ track أد إيه بالبيكسلز.
+           الشيفت بيمثل القيمة اللى بيتحرك بيها علشان سلايد الاندكس تيجي في النص بالظبط. */
+        var Ow = outer.offsetWidth;
+        var shift = index * step - (Ow - W) / 2;
+
+        /* في حالة الواجهة العربي (RTL) بنزق الـ track للاتجاه الموجب X */
+        track.style.transform = 'translateX(' + (isRTL ? shift : -shift) + 'px)';
+
+        /* بنعدّل الكلاس .active علشان السلايد المظبوطة تنور */
+        slides.forEach(function (s, i) {
+            s.classList.toggle('active', i === index);
+        });
+
+        /* وبنعدل كمان النقطة الـ active الدوت اللي تحتها */
+        document.querySelectorAll('.dot').forEach(function (d, i) {
+            d.classList.toggle('active', i === index);
+        });
+
+        /* دايماً السهمين هيفضلوا enabled علشان هو circular carousel بيلف براحته */
+        prevBtn.disabled = false;
+        nextBtn.disabled = false;
+    }
+
+    /* ── event handlers لضغطة الـ arrow buttons ─────────────────────── */
+    /* السهم اليمين (prev) دايماً بيرجع للخلف والسهم الشمال (next) دايماً بيروح لقدام */
+    prevBtn.addEventListener('click', function () {
+        goTo(current - 1);
+    });
+
+    nextBtn.addEventListener('click', function () {
+        goTo(current + 1);
+    });
+
+    /* ── هاندلر تفاعل الكليكات مع السلايد (Slide click handler) ─────────────────────────────── */
+    /* لو دوست على كارت غير الـ active هيتحرك ويروح ليه.
+       بس لو دوست على الكارت النشط اللي شغال، مش هيعمل حاجة ويسيب مشغل الفيديو (video controls) يشتغل طبيعي */
+    slides.forEach(function (s, i) {
+        s.addEventListener('click', function (e) {
+            if (i !== current) {
+                e.stopPropagation(); /* ده بيمنع إن الكليك تروح للفيديو وتبوظه */
+                goTo(i);
+            }
+            /* لو هو نشط: الكنترولز بتاعت الفيديو هيتعامل مع الكليك */
+        });
+    });
+
+    /* ── دعم التمرير باللمس (Touch / swipe) في الموبايل ───────────────────────────── */
+    var touchStartX = 0;
+    outer.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    outer.addEventListener('touchend', function (e) {
+        var diff = touchStartX - e.changedTouches[0].clientX;
+        /* لو التمرير زاد عن 40 بيكسل هيبدأ يستجيب وينقل السلايد */
+        if (Math.abs(diff) > 40) {
+            goTo(current + (diff > 0 ? 1 : -1));
+        }
+    }, { passive: true });
+
+    /* ── دالة الـ Init لتشغيل الكاروسيل في البداية ──────────────── */
+    function init() {
+        applyWidths();
+        goTo(current);
+    }
+
+    /* ── إخفاء الـ placeholder أول ما الفيديو يتحمل ─────────── */
+    document.querySelectorAll('.video-box video').forEach(function(vid) {
+        var placeholder = vid.parentElement.querySelector('.video-placeholder');
+        if (!placeholder) return;
+        function hidePlaceholder() {
+            placeholder.style.display = 'none';
+        }
+        /* لو الفيديو محمّل خلاص (readyState >= 1) يبقى نخفي الـ placeholder فوراً */
+        if (vid.readyState >= 1) {
+            hidePlaceholder();
+        } else {
+            vid.addEventListener('loadedmetadata', hidePlaceholder);
+            vid.addEventListener('loadeddata', hidePlaceholder);
+            vid.addEventListener('canplay', hidePlaceholder);
+        }
+        /* fallback: لو مفيش error يبقى بنخفيه بعد ثانية */
+        vid.addEventListener('error', function() {
+            placeholder.style.display = 'flex';
+        });
+    });
+
+    /* بنشغل دالة الـ init أول ما الـ page تكون جاهزة للعمل፣ ولما يحصل resize للشاشة، ولما اللغة تتغير */
+    window.addEventListener('DOMContentLoaded', init);
+    window.addEventListener('resize', function () { init(); });
+    window.addEventListener('languageChanged', function () {
+        /* بنستنى 50 مللي ثانية لحد ما الـ dir attribute يتغير وبعدين نعيد الحساب */
+        setTimeout(init, 50);
+    });
+    </script>
+
+    <!-- حمل ملف الـ theme.js الأًول (علشان يمنع إن يحصلومضان للشاشة أول ما تفتح قبل ما الدارك مود يتفعل) -->
+    <script src="js/theme.js"></script>
+    <!-- بعده حمل الـ main.js (وهو اللي بيهندل ترجمة النصوص لكل الصفحات) -->
+    <script src="js/main.js"></script>
+
+</body>
+</html>

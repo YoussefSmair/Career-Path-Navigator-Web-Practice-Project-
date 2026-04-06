@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- ═══════════════════════════════════════════════════════
+         إعدادات الـ META والصفحة (META & PAGE SETUP)
+    ═══════════════════════════════════════════════════════════ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Career Path Navigator – اختبار تحديد المسار المهني">
+    <title>Career Path Navigator | الاختبار</title>
+    <!-- ملف الـ CSS الأساسي (Main stylesheet) – بيشمل كل التنسيقات المشتركة والمتغيرات والوضع الليلي -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         الشريط العلوي (NAVBAR)
+         التقسيمة (Layout): [زراير التحكم (شمال)] ── [الشعار (في النص)] ── [روابط التنقل (يمين)]
+         ترتيب الروابط: الرئيسية (Home) → الاختبار (Assessment) → عن الموقع (About)
+         كلاس .active بيميز الصفحة الحالية.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <nav class="navbar">
+        <!-- زراير اللغة والوضع الليلي (Language & Theme buttons - LEFT side) -->
+        <div class="nav-controls">
+            <!-- بيبدل بين عربي وإنجليزي (AR ↔ EN) والمنطق بتاعه في js/main.js -->
+            <button id="langToggle" class="ctrl-btn">🌐 EN</button>
+            <!-- بيبدل بين الوضع الفاتح والليلي (Light ↔ Dark mode) والمنطق فـ js/theme.js -->
+            <button id="themeToggle" class="ctrl-btn">🌙 Dark</button>
+        </div>
+
+        <!-- القائمة الجانبية للموبايل (Hamburger button – visible on mobile only) -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- اسم الموقع، متسنتر عن طريق الـ CSS absolute positioning -->
+        <div class="logo"><img src="assets/images/new_image_3.png" alt="Logo" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; margin-inline-end: 8px;">Career Path <span>Navigator</span></div>
+
+        <!-- روابط التنقل (Nav links - RIGHT side): الرئيسية → الاختبار (هو الصفحة الحالية) → عن الموقع -->
+        <ul class="nav-links">
+            <li><a href="home.html" data-i18n="nav_home">الرئيسية</a></li>
+            <!-- كلاس .active بيوضح إن دي الصفحة المفتوحة حالياً -->
+            <li><a href="assessment.html" class="active" data-i18n="nav_assessment">الاختبار</a></li>
+            <li><a href="about.html" data-i18n="nav_about">عن المشروع</a></li>
+        </ul>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         رأس الصفحة (PAGE HEADER)
+         العنوان والوصف الفرعي فوق منطقة الاختبار.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div class="page-header">
+        <h1 id="assessmentTitle" data-i18n="assessment_title">اختبار المسار المهني</h1>
+        <p id="assessmentSub" data-i18n="assessment_subtext">أجب بصدق – لا توجد إجابات خاطئة!</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         حاوية الاختبار (QUIZ WRAPPER)
+         بتضم شريط التقدم (Progress bar) وكارت السؤال.
+         كل المحتوى الديناميكي (أسئلة، خيارات) بيتم حقنه هنا عن طريق ملف quiz.js.
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div class="assessment-wrapper">
+
+        <!-- شريط التقدم: بيتحدث عن طريق quiz.js كل ما اليوزر يجاوب -->
+        <div class="progress-info">
+            <!-- النصوص دي بتتحدث لايف (live updates) عن طريق quiz.js -->
+            <span id="progressText">السؤال 1 من 12</span>
+            <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-track">
+            <!-- عرض الشريط (width in %) بيتحدد من الـ JS -->
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- ══ كارت الاختبار (QUIZ CARD) ══════════════════════════════════════
+             الكارت الأساسي للسؤال. ملف الـ quiz.js بيملى الكارت بـ:
+             • رقم السؤال أو البادج (مثال: "السؤال 1")
+             • نص السؤال نفسه
+             • زراير الخيارات (الإجابات)
+             • زراير التنقل (السابق / التالي)
+        ════════════════════════════════════════════════════════════════ -->
+        <div class="quiz-card">
+
+            <!-- بادج السؤال (Question label) مثلاً "السؤال 1" – الـ JS بيحدثها -->
+            <div class="question-label" id="questionLabel">السؤال 1</div>
+
+            <!-- نص السؤال (Question text) – بيتملي ديناميك بالـ JS -->
+            <h2 class="question-text" id="questionText">جار التحميل...</h2>
+
+            <!-- خيارات الإجابات (Answer options) – الـ JS بيحقن أزرار <button> هنا -->
+            <div class="options-list" id="optionsContainer">
+                <!-- quiz.js هيمسح الكومنت ده ويبني الزراير مكانه -->
+            </div>
+
+            <!-- ── زراير التنقل (Navigation Buttons) ────────────────────────────── -->
+            <div class="quiz-nav">
+                <!-- زرار التالي / الإرسال – بيتحول لكلمة "عرض النتائج (Show Results)" في آخر سؤال -->
+                <button id="nextBtn" class="btn btn-primary" data-i18n="next_btn">التالي →</button>
+
+                <!-- فراغ (Spacer): بيزق زرار التالي للناحية التانية لما بيكون زرار السابق مخفي -->
+                <div></div>
+
+                <!-- زرار السابق (Previous button) – بيكون مخفي في أول سؤال (display:none) -->
+                <button id="prevBtn" class="btn btn-secondary" style="display:none;" data-i18n="prev_btn">السابق</button>
+            </div>
+
+        </div>
+        <!-- End quiz-card -->
+
+    </div>
+    <!-- End assessment-wrapper -->
+
+    <!-- ═══ الفوتر (FOOTER) ════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <p data-i18n="footer_text">© 2025 Career Path Navigator – مشروع تعليمي</p>
+    </footer>
+
+    <!-- ترتيب استدعاء ملفات الجافاسكريبت (Scripts load order):
+         1. theme.js   – بيطبق الوضع الفاتح/الليلي (عشان نمنع الوميض).
+         2. main.js    – بيطبق اللغة المحفوظة وبيظبط النصوص (data-i18n).
+         3. quiz.js    – بيحمّل الأسئلة وبيشغل منطق الاختبار كله. -->
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/quiz.js"></script>
+
+</body>
+</html>
